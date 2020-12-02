@@ -10,7 +10,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     @Override
     public void init(directed_weighted_graph g) {
         this.gAlgo=g;
-        System.out.println("init succsesfully");
     }
 
     @Override
