@@ -2,17 +2,18 @@ package api;
 
 public class edge implements edge_data{
     private int src,dest,weight_tag;
-    private double edge_weight;
+    private double w;
     private String edge_info="";
 
 
     public edge(int src,int dest,double edge_weight){
         this.src=src;
         this.dest=dest;
-        this.edge_weight=edge_weight;
-
+        this.w=edge_weight;
 
     }
+
+
     /*public edge(edge other){
         other.weight_tag=this.weight_tag;
         other.edge_info=this.edge_info;
@@ -34,7 +35,7 @@ public class edge implements edge_data{
 
     @Override
     public double getWeight() {
-        return edge_weight;
+        return w;
     }
 
     @Override
@@ -60,6 +61,6 @@ public class edge implements edge_data{
     }
 
     public void setEdge_weight(double edge_weight) {
-        this.edge_weight = edge_weight;
+        this.w = edge_weight;
     }
 }

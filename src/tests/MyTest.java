@@ -1,4 +1,8 @@
-package api;
+package tests;
+
+import api.DWGraph_Algo;
+import api.DWGraph_DS;
+import api.NodeData;
 
 public class MyTest {
     public static void main(String[] args) {
@@ -88,6 +92,7 @@ public class MyTest {
 */
 
 
+        System.out.println(algo.save("test"));
 
     }
 }

@@ -1,16 +1,24 @@
 package api;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.*;
 
 import static java.lang.Double.POSITIVE_INFINITY;
 
 
 public class DWGraph_Algo implements dw_graph_algorithms {
-    directed_weighted_graph gAlgo=new DWGraph_DS();
+    directed_weighted_graph gAlgo = new DWGraph_DS();
+
     @Override
     public void init(directed_weighted_graph g) {
-        this.gAlgo=g;
-        System.out.println("test");
+        this.gAlgo = g;
+
     }
 
     @Override
@@ -20,44 +28,44 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     @Override
     public directed_weighted_graph copy() {
-        directed_weighted_graph copy=new DWGraph_DS((DWGraph_DS) gAlgo);
+        directed_weighted_graph copy = new DWGraph_DS((DWGraph_DS) gAlgo);
         return copy;
 
     }
 
     @Override
     public boolean isConnected() {
-        if(gAlgo.nodeSize()==0 ||gAlgo.nodeSize()==1) return true;
-        int counter=1,firstKey;
-        for(node_data i:gAlgo.getV()){
+        if (gAlgo.nodeSize() == 0 || gAlgo.nodeSize() == 1) return true;
+        int counter = 1, firstKey;
+        for (node_data i : gAlgo.getV()) {
             i.setTag(0);
         }
 
-        node_data first=gAlgo.getV().iterator().next();
+        node_data first = gAlgo.getV().iterator().next();
         first.setTag(1);
-        firstKey=first.getKey();
-        LinkedList<Integer> fakeQ=new LinkedList<>();
+        firstKey = first.getKey();
+        LinkedList<Integer> fakeQ = new LinkedList<>();
         fakeQ.add(firstKey);
-        while (!fakeQ.isEmpty()){
-            int current=fakeQ.removeFirst();
-            for(edge_data j:gAlgo.getE(current)){
+        while (!fakeQ.isEmpty()) {
+            int current = fakeQ.removeFirst();
+            for (edge_data j : gAlgo.getE(current)) {
                 node_data tempNode = gAlgo.getNode(j.getDest());
-                if(tempNode.getTag()==0){
+                if (tempNode.getTag() == 0) {
                     fakeQ.addLast(tempNode.getKey());
                     counter++;
                     tempNode.setTag(1);
                 }
             }
         }
-        if(counter!=gAlgo.nodeSize()) return false;
-        counter=1; // everyone tag=1
+        if (counter != gAlgo.nodeSize()) return false;
+        counter = 1; // everyone tag=1
         fakeQ.addLast(firstKey);
         gAlgo.getNode(firstKey).setTag(0);
-        while(!fakeQ.isEmpty()){
-            int current=fakeQ.removeFirst();
+        while (!fakeQ.isEmpty()) {
+            int current = fakeQ.removeFirst();
 
-            for(int i:((DWGraph_DS)(gAlgo)).getPointOnMe(current)){
-                if(gAlgo.getNode(i).getTag()==1){
+            for (int i : ((DWGraph_DS) (gAlgo)).getPointOnMe(current)) {
+                if (gAlgo.getNode(i).getTag() == 1) {
                     gAlgo.getNode(i).setTag(0);
                     fakeQ.addLast(i);
                     counter++;
@@ -66,15 +74,15 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
         }
         System.out.println();
-        if(counter==gAlgo.nodeSize()) return true;
+        if (counter == gAlgo.nodeSize()) return true;
         return false;
     }
 
     @Override
     public double shortestPathDist(int src, int dest) {
-        if(gAlgo.getNode(src)==null ||gAlgo.getNode(dest)==null) return -1;
-        if(gAlgo.getE(src)==null || ((DWGraph_DS)(gAlgo)).getPointOnMe(dest).isEmpty()) return -1;
-        if(src==dest)return 0;
+        if (gAlgo.getNode(src) == null || gAlgo.getNode(dest) == null) return -1;
+        if (gAlgo.getE(src) == null || ((DWGraph_DS) (gAlgo)).getPointOnMe(dest).isEmpty()) return -1;
+        if (src == dest) return 0;
         HashMap<Integer, Double> distance = new HashMap<>();
         if (src == dest) return 0;
         if (gAlgo.getNode(src) == null || gAlgo.getNode(dest) == null) return -1;
@@ -105,24 +113,21 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             }
             u.setTag(1);
         }
-        if(distance.get(dest)==POSITIVE_INFINITY) return -1;
+        if (distance.get(dest) == POSITIVE_INFINITY) return -1;
         return distance.get(dest);
     }
 
 
-
-
-
     @Override
     public List<node_data> shortestPath(int src, int dest) {
-        HashMap<Integer,Integer>parents=new HashMap<>();
-        LinkedList<node_data>ans=new LinkedList<>();
+        HashMap<Integer, Integer> parents = new HashMap<>();
+        LinkedList<node_data> ans = new LinkedList<>();
 
-        if(gAlgo.getNode(src)==null ||gAlgo.getNode(dest)==null) return null;
-        if(gAlgo.getE(src)==null || ((DWGraph_DS)(gAlgo)).getPointOnMe(dest).isEmpty()) return null;
-        if(src==dest){
-             ans.addLast(gAlgo.getNode(src));
-             return ans;
+        if (gAlgo.getNode(src) == null || gAlgo.getNode(dest) == null) return null;
+        if (gAlgo.getE(src) == null || ((DWGraph_DS) (gAlgo)).getPointOnMe(dest).isEmpty()) return null;
+        if (src == dest) {
+            ans.addLast(gAlgo.getNode(src));
+            return ans;
         }
         HashMap<Integer, Double> distance = new HashMap<>();
         if (gAlgo.getNode(src) == null || gAlgo.getNode(dest) == null) return null;
@@ -148,7 +153,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
                 if (tempNode.getTag() == 0) {
                     if (distance.get(tempNode.getKey()) > distance.get(u.getKey()) + v.getWeight())
                         distance.put(tempNode.getKey(), distance.get(u.getKey()) + v.getWeight());
-                    parents.put(tempNode.getKey(),u.getKey());
+                    parents.put(tempNode.getKey(), u.getKey());
                     q.add(tempNode);
                 }
             }
@@ -156,23 +161,54 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         }
         //if(distance.get(dest)==POSITIVE_INFINITY) return -1;
         //return distance.get(dest);
-        int i=dest;
+        int i = dest;
         ans.add(gAlgo.getNode(i));
-        while(i!=src){
+        while (i != src) {
             ans.addFirst(gAlgo.getNode(parents.get(i)));
-            i=parents.get(i);
+            i = parents.get(i);
         }
-        if(ans.size()==1) return null;
+        if (ans.size() == 1) return null;
         return ans;
     }
 
     @Override
+
+
     public boolean save(String file) {
-        return false;
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(gAlgo);
+        System.out.println(json);
+
+        //Write JSON to file
+        try {
+            PrintWriter pw = new PrintWriter(new File("Graph.json"));
+            pw.write(json);
+            pw.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
+
 
     @Override
     public boolean load(String file) {
-        return false;
+
+        try {
+            GsonBuilder builder = new GsonBuilder();
+            builder.registerTypeAdapter(DWGraph_DS.class, new GraphJsonDeserializer());
+            Gson gson = builder.create();
+
+            FileReader reader = new FileReader(file);
+            gAlgo = gson.fromJson(reader, DWGraph_DS.class); //wrong
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 }

@@ -4,13 +4,18 @@ public class NodeData implements node_data, Comparable<node_data>  {
 
     private int key,tag=0;
     private static int key_counter=0;
-    private geo_location loc=null;
+    private geo_location pos=null;
     private double weight=0;
     private String info="";
 
 
     public NodeData(){
         this.key=key_counter++;
+    }
+
+    public NodeData(int id ){
+    this.key=id;
+
     }
 
 
@@ -21,12 +26,12 @@ public class NodeData implements node_data, Comparable<node_data>  {
 
     @Override
     public geo_location getLocation() {
-        return loc;
+        return pos;
     }
 
     @Override
     public void setLocation(geo_location p) {
-        this.loc=p;
+        this.pos=p;
 
     }
 
@@ -62,12 +67,11 @@ public class NodeData implements node_data, Comparable<node_data>  {
     this.tag=t;
     }
 
-    @Override
-    public String toString() {
-        return "NodeData " +
-                "[key=" + key+"]" ;
-
-    }
+//    @Override
+//    public String toString() {
+//        return  "pos: "+ pos + " id: " + key ;
+//
+//    }
 
     @Override
     public int compareTo(node_data o) {
@@ -76,5 +80,6 @@ public class NodeData implements node_data, Comparable<node_data>  {
         else if (this.getTag() - o.getTag() < 0) ans = -1;
         return ans;
     }
+
 
 }
