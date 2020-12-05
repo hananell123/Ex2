@@ -202,7 +202,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             Gson gson = builder.create();
 
             FileReader reader = new FileReader(file);
-            gAlgo = gson.fromJson(reader, DWGraph_DS.class); //wrong
+            gAlgo = gson.fromJson(reader, DWGraph_DS.class); 
 
         } catch (Exception e) {
             e.printStackTrace();
