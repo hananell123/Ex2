@@ -15,6 +15,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     }
     public DWGraph_DS(DWGraph_DS other){
+        System.out.println("here");
        this.Edges=new HashMap<Integer,HashMap<Integer,edge_data>>();
         this.Nodes=new HashMap<Integer,node_data>();
        this.point_on_me=new HashMap<Integer,HashMap<Integer,Integer>>();
