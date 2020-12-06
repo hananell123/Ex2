@@ -1,12 +1,9 @@
 package frame;
+
 import api.*;
-import api.DWGraph_DS;
-import api.NodeData;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.color.*;
-import java.awt.event.MouseListener;
 
 public class MyPanel extends JPanel  {
     directed_weighted_graph graph;
@@ -18,28 +15,27 @@ public class MyPanel extends JPanel  {
         graph=g1;
     }
 
-    public void DrawGraph(directed_weighted_graph g){
-        for(node_data n:g.getV()){
 
-        }
-    }
-    public void paintComponent(Graphics g){
+    public void paintComponent(Graphics g) {
         repaint();
         super.paintComponent(g);
-        g.fillOval( 100,100,30,30);
-        g.fillOval( 200,200,30,30);
 
 
-       for (node_data n:graph.getV()){
-            geo_location loc=n.getLocation();
-           System.out.println(loc.x());
-           System.out.println(loc.y());
-           g.fillOval( (int) loc.x(),(int) loc.y(),30,30);
+        for (node_data n : graph.getV()) {
+            geo_location loc = n.getLocation();
+            g.fillOval((int) loc.x(), (int) loc.y(), 30, 30);
         }
-       // for( n:((DWGraph_DS)(graph)).getEdges().values(){
+        for (node_data n : graph.getV()) {
+            for (edge_data e : graph.getE(n.getKey())) {
+            int x1 = (int) graph.getNode(e.getSrc()).getLocation().x();
+            int y1 = (int) graph.getNode(e.getSrc()).getLocation().y();
+            int x2 = (int) graph.getNode(e.getDest()).getLocation().x();
+            int y2 = (int) graph.getNode(e.getDest()).getLocation().y();
 
+                g.drawLine(x1,y1,x2,y2);
+            }
         }
-
+    }
 
     }
 

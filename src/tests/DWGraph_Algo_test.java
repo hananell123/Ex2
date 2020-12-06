@@ -47,14 +47,14 @@ public class DWGraph_Algo_test {
     @Test
     void save_load() {
     DWGraph_Algo g = new DWGraph_Algo();
-    g = build_unConnect();
-   g.save("testSave");
+   // g = build_unConnect();
+  // g.save("testSave");
    g.load("C:\\Users\\Hodaya\\IdeaProjects\\ex2\\data\\A0");
-   g.load("C:\\Users\\Hodaya\\IdeaProjects\\ex2\\data\\A1");
-    g.load("C:\\Users\\Hodaya\\IdeaProjects\\ex2\\data\\A2");
-    g.load("C:\\Users\\Hodaya\\IdeaProjects\\ex2\\data\\A3");
-    g.load("C:\\Users\\Hodaya\\IdeaProjects\\ex2\\data\\A4");
-    g.load("C:\\Users\\Hodaya\\IdeaProjects\\ex2\\data\\A5");
+ g.load("C:\\Users\\Hodaya\\IdeaProjects\\ex2\\data\\A1");
+//    //g.load("C:\\Users\\Hodaya\\IdeaProjects\\ex2\\data\\A2");
+//    g.load("C:\\Users\\Hodaya\\IdeaProjects\\ex2\\data\\A3");
+//    g.load("C:\\Users\\Hodaya\\IdeaProjects\\ex2\\data\\A4");
+//    g.load("C:\\Users\\Hodaya\\IdeaProjects\\ex2\\data\\A5");
 
 
     }
