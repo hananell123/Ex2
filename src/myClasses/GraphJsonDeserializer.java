@@ -1,5 +1,6 @@
-package api;
+package myClasses;
 
+import api.geo_location;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;

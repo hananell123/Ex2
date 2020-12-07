@@ -1,12 +1,16 @@
-package api;
+package myClasses;
+
+import api.directed_weighted_graph;
+import api.edge_data;
+import api.node_data;
 
 import java.util.Collection;
 import java.util.HashMap;
 
-public class DWGraph_DS implements directed_weighted_graph{
+public class DWGraph_DS implements directed_weighted_graph {
 
-    private HashMap <Integer,HashMap<Integer,edge_data>>Edges=new HashMap<Integer,HashMap<Integer,edge_data>>();
-    private HashMap<Integer,node_data> Nodes=new HashMap<Integer,node_data>();
+    private HashMap <Integer,HashMap<Integer, edge_data>>Edges=new HashMap<Integer,HashMap<Integer,edge_data>>();
+    private HashMap<Integer, node_data> Nodes=new HashMap<Integer,node_data>();
     private HashMap <Integer,HashMap<Integer,Integer>>point_on_me=new HashMap<Integer,HashMap<Integer,Integer>>();
     private HashMap<Integer,edge_data> edges = new  HashMap<Integer,edge_data>();
     private int mc=0,edge_size=0;

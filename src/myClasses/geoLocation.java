@@ -1,7 +1,9 @@
-package api;
+package myClasses;
 
 
-public class geoLocation implements geo_location{
+import api.geo_location;
+
+public class geoLocation implements geo_location {
     double x;
     double y;
     double z;

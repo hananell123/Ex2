@@ -3,9 +3,9 @@
 package tests;
 
 
-import api.DWGraph_Algo;
-import api.DWGraph_DS;
-import api.NodeData;
+import myClasses.DWGraph_Algo;
+import myClasses.DWGraph_DS;
+import myClasses.NodeData;
 import org.junit.jupiter.api.Test;
 
 public class DWGraph_Algo_test {

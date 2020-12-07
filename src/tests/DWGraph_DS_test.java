@@ -2,8 +2,8 @@
 package tests;
 
 
-import api.DWGraph_DS;
-import api.NodeData;
+import myClasses.DWGraph_DS;
+import myClasses.NodeData;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

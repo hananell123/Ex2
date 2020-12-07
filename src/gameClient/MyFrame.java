@@ -19,7 +19,7 @@ public class MyFrame extends JFrame{
 	private Arena _ar;
 	private gameClient.util.Range2Range _w2f;
 
-	MyFrame(String a) {
+	public MyFrame(String a) {
 		super(a);
 		int _ind = 0;
 	}

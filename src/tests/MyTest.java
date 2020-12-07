@@ -1,8 +1,8 @@
 package tests;
 
-import api.DWGraph_Algo;
-import api.DWGraph_DS;
-import api.NodeData;
+import myClasses.DWGraph_Algo;
+import myClasses.DWGraph_DS;
+import myClasses.NodeData;
 
 public class MyTest {
     public static void main(String[] args) {

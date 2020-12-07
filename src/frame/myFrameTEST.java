@@ -1,16 +1,13 @@
 package frame;
 
-import api.DWGraph_Algo;
-import api.DWGraph_DS;
 import api.*;
 
 import javax.swing.*;
-import java.awt.*;
 
-public class myFrame extends JFrame {
+public class myFrameTEST extends JFrame {
 
 
-    public myFrame(directed_weighted_graph g1){
+    public myFrameTEST(directed_weighted_graph g1){
         initFrame();
         initPanel(g1);
     }
@@ -20,7 +17,7 @@ public class myFrame extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     private void initPanel(directed_weighted_graph g1){
-         MyPanel panel=new MyPanel();
+         MyPanelTEST panel=new MyPanelTEST();
         panel.init(g1);
          this.add(panel);
 

@@ -1,5 +1,9 @@
-package api;
+package myClasses;
 
+import api.directed_weighted_graph;
+import api.dw_graph_algorithms;
+import api.edge_data;
+import api.node_data;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

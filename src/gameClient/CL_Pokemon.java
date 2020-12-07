@@ -1,8 +1,12 @@
 package gameClient;
 
 import api.edge_data;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import gameClient.util.Point3D;
-import org.json.JSONObject;
+
+import java.io.FileReader;
+import java.util.ArrayList;
 
 public class CL_Pokemon {
 	private edge_data _edge;
@@ -11,6 +15,7 @@ public class CL_Pokemon {
 	private Point3D _pos;
 	private double min_dist;
 	private int min_ro;
+	static public ArrayList<CL_Pokemon> arr;
 	
 	public CL_Pokemon(Point3D p, int t, double v, double s, edge_data e) {
 		_type = t;
@@ -21,25 +26,46 @@ public class CL_Pokemon {
 		min_dist = -1;
 		min_ro = -1;
 	}
+
+//	public CL_Pokemon(){
+//
+//		_type = 0;
+//		//	_speed = s;
+//		_value = 0;
+//		set_edge(null);
+//		//_pos = 0;
+//		min_dist = -1;
+//		min_ro = -1;
+//
+//	}
 	public static CL_Pokemon init_from_json(String json) {
 		CL_Pokemon ans = null;
 		try {
-			JSONObject p = new JSONObject(json);
-			int id = p.getInt("id");
+			GsonBuilder builder = new GsonBuilder();
+			//builder.registerTypeAdapter(new ArrayList<CL_Pokemon> ,PokJasonDes );
+			Gson gson = builder.create();
+
+			FileReader reader = new FileReader(json);
+			//arr = gson.fromJson(reader, CL_Pokemon);
+
+		} catch (Exception e) {
+			e.printStackTrace();
 
 		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
+
+
+
 		return ans;
 	}
 	public String toString() {return "F:{v="+_value+", t="+_type+"}";}
 	public edge_data get_edge() {
+
 		return _edge;
 	}
 
 	public void set_edge(edge_data _edge) {
 		this._edge = _edge;
+
 	}
 
 	public Point3D getLocation() {

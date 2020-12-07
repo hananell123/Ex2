@@ -1,4 +1,7 @@
-package api;
+package myClasses;
+
+import api.geo_location;
+import api.node_data;
 
 public class NodeData implements node_data, Comparable<node_data>  {
 

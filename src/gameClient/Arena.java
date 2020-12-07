@@ -37,6 +37,7 @@ public class Arena {
 		this._agents = f;
 	}
 	public void setGraph(directed_weighted_graph g) {this._gg =g;}//init();}
+
 	private void init( ) {
 		MIN=null; MAX=null;
 		double x0=0,x1=0,y0=0,y1=0;
@@ -54,8 +55,11 @@ public class Arena {
 		MAX = new Point3D(x1+dx/10,y1+dy/10);
 		
 	}
-	public List<CL_Agent> getAgents() {return _agents;}
-	public List<CL_Pokemon> getPokemons() {return _pokemons;}
+	public List<CL_Agent> getAgents()
+	{return _agents;}
+	public List<CL_Pokemon> getPokemons()
+
+	{return _pokemons;}
 
 	
 	public directed_weighted_graph getGraph() {
@@ -65,6 +69,7 @@ public class Arena {
 		return _info;
 	}
 	public void set_info(List<String> _info) {
+
 		this._info = _info;
 	}
 	

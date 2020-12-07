@@ -1,6 +1,8 @@
-package api;
+package myClasses;
 
-public class edge implements edge_data{
+import api.edge_data;
+
+public class edge implements edge_data {
     private int src,dest,weight_tag;
     private double w;
     private String edge_info="";
@@ -30,7 +32,7 @@ public class edge implements edge_data{
 
     @Override
     public int getDest() {
-        return dest;
+            return dest;
     }
 
     @Override
