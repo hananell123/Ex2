@@ -7,6 +7,9 @@ import api.node_data;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class CL_Agent {
 		public static final double EPS = 0.0001;
 		private static int _count = 0;
@@ -19,18 +22,21 @@ public class CL_Agent {
 		private node_data _curr_node;
 		private directed_weighted_graph _gg;
 		private CL_Pokemon _curr_fruit;
-		private long _sg_dt;
-		
+		private int isAvailableAgent =-1;
 		private double _value;
+
+
 		
 		
-		public CL_Agent(directed_weighted_graph g, int start_node) {
+		public CL_Agent(directed_weighted_graph g, int start_node)
+		{
 			_gg = g;
-			setMoney(0);
+		//	setMoney(0);
 			this._curr_node = _gg.getNode(start_node);
 			_pos = _curr_node.getLocation();
 			_id = -1;
 			setSpeed(0);
+
 		}
 		public void update(String json) {
 			JSONObject line;
@@ -59,7 +65,9 @@ public class CL_Agent {
 			}
 		}
 		//@Override
-		public int getSrcNode() {return this._curr_node.getKey();}
+		public int getSrcNode() {
+			return this._curr_node.getKey();
+		}
 		public String toJSON() {
 			int d = this.getNextNode();
 			String ans = "{\"Agent\":{"
@@ -139,31 +147,34 @@ public class CL_Agent {
 		public void set_curr_fruit(CL_Pokemon curr_fruit) {
 			this._curr_fruit = curr_fruit;
 		}
-		public void set_SDT(long ddtt) {
-			long ddt = ddtt;
-			if(this._curr_edge!=null) {
-				double w = get_curr_edge().getWeight();
-				geo_location dest = _gg.getNode(get_curr_edge().getDest()).getLocation();
-				geo_location src = _gg.getNode(get_curr_edge().getSrc()).getLocation();
-				double de = src.distance(dest);
-				double dist = _pos.distance(dest);
-				if(this.get_curr_fruit().get_edge()==this.get_curr_edge()) {
-					 dist = _curr_fruit.getLocation().distance(this._pos);
-				}
-				double norm = dist/de;
-				double dt = w*norm / this.getSpeed(); 
-				ddt = (long)(1000.0*dt);
-			}
-			this.set_sg_dt(ddt);
-		}
+//		public void set_SDT(long ddtt) {
+//			long ddt = ddtt;
+//			if(this._curr_edge!=null) {
+//				double w = get_curr_edge().getWeight();
+//				geo_location dest = _gg.getNode(get_curr_edge().getDest()).getLocation();
+//				geo_location src = _gg.getNode(get_curr_edge().getSrc()).getLocation();
+//				double de = src.distance(dest);
+//				double dist = _pos.distance(dest);
+//				if(this.get_curr_fruit().get_edge()==this.get_curr_edge()) {
+//					 dist = _curr_fruit.getLocation().distance(this._pos);
+//				}
+//				double norm = dist/de;
+//				double dt = w*norm / this.getSpeed();
+//				ddt = (long)(1000.0*dt);
+//			}
+//			this.setisAvailableAgent(ddt);
+//		}
 		
 		public edge_data get_curr_edge() {
 			return this._curr_edge;
 		}
-		public long get_sg_dt() {
-			return _sg_dt;
+		public long getisAvailableAgent() {
+			return isAvailableAgent;
 		}
-		public void set_sg_dt(long _sg_dt) {
-			this._sg_dt = _sg_dt;
+		public void setisAvailableAgent(int isAvailableAgent) {
+			this.isAvailableAgent = isAvailableAgent;
 		}
-	}
+
+
+
+}

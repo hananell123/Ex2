@@ -31,6 +31,10 @@ public class geoLocation implements geo_location {
 
     @Override
     public double distance(geo_location g) {
-        return 0;
+        double xDis=Math.pow( g.x()-this.x,2);
+        double yDis=Math.pow( g.y()-this.y,2);
+
+
+        return Math.sqrt(xDis+yDis);
     }
 }

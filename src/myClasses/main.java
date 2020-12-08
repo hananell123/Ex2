@@ -63,11 +63,11 @@ public class main {
 
         }
 
-        graph.load("C:\\Users\\Hodaya\\IdeaProjects\\ex2\\gameGraph.json");
+        graph.load("C:\\Users\\hanan\\IdeaProjects\\ex2\\gameGraph.json");
 
 
-        MyFrame screen = new MyFrame(s);
-        screen.setVisible(true);
+       // MyFrame screen = new MyFrame(s);
+        //screen.setVisible(true);
 
     }
 }

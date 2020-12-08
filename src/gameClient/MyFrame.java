@@ -98,17 +98,21 @@ public class MyFrame extends JFrame{
 	}
 	private void drawAgants(Graphics g) {
 		List<CL_Agent> rs = _ar.getAgents();
-	//	Iterator<OOP_Point3D> itr = rs.iterator();
-		g.setColor(Color.red);
-		int i=0;
-		while(rs!=null && i<rs.size()) {
-			geo_location c = rs.get(i).getLocation();
-			int r=8;
-			i++;
-			if(c!=null) {
+		if (rs != null) {
+			for (CL_Agent Ag : rs) {
+				//Iterator<OOP_Point3D> itr = rs.iterator();
+				g.setColor(Color.red);
+				int i = 0;
+				while (rs != null && i < rs.size()) {
+					geo_location c = rs.get(i).getLocation();
+					int r = 8;
+					i++;
+					if (c != null) {
 
-				geo_location fp = this._w2f.world2frame(c);
-				g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
+						geo_location fp = this._w2f.world2frame(c);
+						g.fillOval((int) fp.x() - r, (int) fp.y() - r, 2 * r, 2 * r);
+					}
+				}
 			}
 		}
 	}
