@@ -162,7 +162,7 @@ public class CL_Agent {
 //				double dt = w*norm / this.getSpeed();
 //				ddt = (long)(1000.0*dt);
 //			}
-//			this.setisAvailableAgent(ddt);
+//			this.setisAvailableAgent((int)ddt);
 //		}
 		
 		public edge_data get_curr_edge() {

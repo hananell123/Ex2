@@ -21,6 +21,7 @@ public class Ex2_Client implements Runnable{
 	private ArrayList<CL_Pokemon> AvailablePokemone = new ArrayList<>();
 	DWGraph_Algo gg=new DWGraph_Algo();
 	HashMap<Integer,edge_data>srcList=new HashMap<>();
+	LinkedList<geo_location>locations=new LinkedList<>();
 
 
 	public static void main(String[] a) {
@@ -30,7 +31,7 @@ public class Ex2_Client implements Runnable{
 	
 	@Override
 	public void run() {
-		int scenario_num = 11;
+		int scenario_num = 1;
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
 	//	int id = 999;
 	//	game.login(id);
@@ -42,7 +43,7 @@ public class Ex2_Client implements Runnable{
 		long dt=100;
 		
 		while(game.isRunning()) {
-			moveAgants(game, gg.getGraph());
+			moveAgents(game, gg.getGraph());
 			try {
 				if(ind%1==0) {_win.repaint();}
 				Thread.sleep(dt);
@@ -78,23 +79,28 @@ public class Ex2_Client implements Runnable{
 //			}
 //		}
 //	}
-	public void moveAgants(game_service game, directed_weighted_graph gg) {
+	public void moveAgents(game_service game, directed_weighted_graph gg) {
 		String lg = game.move();
 		List<CL_Agent> log = Arena.getAgents(lg, gg);
 		_ar.setAgents(log);
 		String fs =  game.getPokemons();
 		List<CL_Pokemon> ffs = Arena.json2Pokemons(fs);
 		_ar.setPokemons(ffs);
-		for(CL_Agent agent:AllAgent){
+		for(CL_Pokemon p:ffs){
+			Arena.updateEdge(p,gg);
+		}
+		for(CL_Agent agent:log){
 			int dest;
 			if(agent.getisAvailableAgent()==-1){
+
+				//agent.getisAvailableAgent()==-1
 				if(srcList.get(agent.getID()).getSrc()== agent.getSrcNode()){
 					dest=srcList.get(agent.getID()).getDest();
 				}
 				else{
 					dest=nextNode(gg,agent.getSrcNode());
-					game.chooseNextEdge(agent.getID(), dest);
 				}
+				System.out.println("Agent "+agent.getID()+"go to "+dest);
 				game.chooseNextEdge(agent.getID(),dest);
 
 			}
@@ -104,10 +110,22 @@ public class Ex2_Client implements Runnable{
 
 
 	}
-	private static int nextNode(directed_weighted_graph g, int src){
+	private  int nextNode(directed_weighted_graph g, int src){
+		double w=Integer.MAX_VALUE;
+		int dest=-1;
+		for(CL_Pokemon p: _ar.getPokemons()){
+			if(this.allPathDis.get(src).get(p.get_edge().getSrc())<w && this.allPathDis.get(src).get(p.get_edge().getSrc())!=-1){
+				w=this.allPathDis.get(src).get(p.get_edge().getSrc());
+				if(w==0){
+					return p.get_edge().getDest();
+				}
+				dest=p.get_edge().getSrc();
+			}
 
+		}
+		LinkedList<node_data>path=(LinkedList<node_data>) allPath.get(src).get(dest);
 
-
+		return path.get(1).getKey();
 	}
 
 
@@ -118,6 +136,7 @@ public class Ex2_Client implements Runnable{
 		loadGraph(g,gg);
 		setAllPath(gg);
 		setAllPathDis(gg);
+		nodeLocation(gg.getGraph());
 		//String pks = game.getPokemons();
 		String fs = game.getPokemons();
 
@@ -144,10 +163,9 @@ public class Ex2_Client implements Runnable{
 			  // set agent to vertex
 				for (CL_Pokemon p : AllPokemones) {//check connectivity!!!!!!!!!!!!!!!!!!!!!!!
 					if(a<AgentNum) {
-						CL_Agent cl=new CL_Agent(gg.getGraph(),p.get_edge().getSrc());
-						srcList.put(cl.getID(),p.get_edge());
 						game.addAgent(p.get_edge().getSrc());
-						AllAgent.add(cl);
+						srcList.put(a,p.get_edge());
+						//AllAgent.add();
 
 						//LinkedList<node_data> l = new LinkedList<node_data>();
 						//l.add(gg.getGraph().getNode(p.get_edge().getDest()));
@@ -198,8 +216,8 @@ public class Ex2_Client implements Runnable{
 
 	/**
 	 * a very simple random walk implementation!
-	 * @param g
-	 * @param src
+	 * @param
+	 * @param
 	 * @return
 	 */
 //	private static int nextNode(directed_weighted_graph g, int src) {
@@ -230,6 +248,12 @@ public class Ex2_Client implements Runnable{
 				allPathDis.get(a.getKey()).put(b.getKey(),graphToPath.shortestPathDist(a.getKey(),b.getKey()));
 			}
 		}
+	}
+	public void nodeLocation(directed_weighted_graph g){
+		for(node_data n:g.getV()){
+			locations.add(n.getLocation());
+		}
+
 	}
 
 }
