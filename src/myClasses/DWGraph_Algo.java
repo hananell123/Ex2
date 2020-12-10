@@ -155,10 +155,11 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             for (edge_data v : gAlgo.getE(u.getKey())) {
                 node_data tempNode = gAlgo.getNode(v.getDest());
                 if (tempNode.getTag() == 0) {
-                    if (distance.get(tempNode.getKey()) > distance.get(u.getKey()) + v.getWeight())
+                    if (distance.get(tempNode.getKey()) > distance.get(u.getKey()) + v.getWeight()) {
                         distance.put(tempNode.getKey(), distance.get(u.getKey()) + v.getWeight());
-                    parents.put(tempNode.getKey(), u.getKey());
-                    q.add(tempNode);
+                        parents.put(tempNode.getKey(), u.getKey());
+                        q.add(tempNode);
+                    }
                 }
             }
             u.setTag(1);

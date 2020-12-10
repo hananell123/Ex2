@@ -3,6 +3,7 @@ package gameClient;
 import Server.Game_Server_Ex2;
 import api.*;
 import myClasses.DWGraph_Algo;
+import myClasses.edge;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,9 +17,7 @@ public class Ex2_Client implements Runnable{
 	private static Arena _ar;
 	private HashMap<Integer,HashMap<Integer,List<node_data>>>allPath=new HashMap<>();
 	private HashMap<Integer,HashMap<Integer,Double>>allPathDis=new HashMap<>();
-	private Queue<CL_Agent>freeAgent=new LinkedList<>();
 	private List<CL_Agent>AllAgent=new LinkedList<>();
-	private ArrayList<CL_Pokemon> AvailablePokemone = new ArrayList<>();
 	DWGraph_Algo gg=new DWGraph_Algo();
 	HashMap<Integer,edge_data>srcList=new HashMap<>();
 	LinkedList<geo_location>locations=new LinkedList<>();
@@ -36,7 +35,7 @@ public class Ex2_Client implements Runnable{
 	//	int id = 999;
 	//	game.login(id);
 		init(game);
-		//freeAgent.addAll();
+		System.out.println();
 		game.startGame();// start game!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		_win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
 		int ind=0;
@@ -91,41 +90,51 @@ public class Ex2_Client implements Runnable{
 		}
 		for(CL_Agent agent:log){
 			int dest;
-			if(agent.getisAvailableAgent()==-1){
+			if(agent.get_curr_edge()==null){
 
-				//agent.getisAvailableAgent()==-1
 				if(srcList.get(agent.getID()).getSrc()== agent.getSrcNode()){
 					dest=srcList.get(agent.getID()).getDest();
 				}
 				else{
-					dest=nextNode(gg,agent.getSrcNode());
+					dest=nextNode(gg,agent);
 				}
-				System.out.println("Agent "+agent.getID()+"go to "+dest);
 				game.chooseNextEdge(agent.getID(),dest);
+				//System.out.println("Agent "+agent.getID()+"go to "+dest);
+
 
 			}
-
-
 		}
-
-
 	}
-	private  int nextNode(directed_weighted_graph g, int src){
-		double w=Integer.MAX_VALUE;
+	private  int nextNode(directed_weighted_graph g, CL_Agent agent){
+		double currentDistance=Integer.MAX_VALUE;
 		int dest=-1;
 		for(CL_Pokemon p: _ar.getPokemons()){
-			if(this.allPathDis.get(src).get(p.get_edge().getSrc())<w && this.allPathDis.get(src).get(p.get_edge().getSrc())!=-1){
-				w=this.allPathDis.get(src).get(p.get_edge().getSrc());
-				if(w==0){
-					return p.get_edge().getDest();
+			double TempDistance=this.allPathDis.get(agent.getSrcNode()).get(p.get_edge().getSrc());
+
+			if(TempDistance<currentDistance && TempDistance!=-1){
+				currentDistance=TempDistance;
+				if(currentDistance==0){
+					return p.get_edge().getDest() ;
 				}
-				dest=p.get_edge().getSrc();
+				//dest=p.get_edge().getSrc();
+				srcList.put(agent.getID(),p.get_edge());
 			}
 
 		}
-		LinkedList<node_data>path=(LinkedList<node_data>) allPath.get(src).get(dest);
+		int src1=agent.getSrcNode();
+		int dest1=srcList.get(agent.getID()).getSrc();
 
-		return path.get(1).getKey();
+
+		LinkedList<node_data>answer=(LinkedList)allPath.get(agent.getSrcNode()).get(dest1);
+		if(answer.size()>2) {
+			LinkedList<node_data> temp = (LinkedList) allPath.get(answer.get(1).getKey()).get(dest1);
+			if (temp.get(1).getKey() == answer.get(0).getKey()) {
+				return temp.get(2).getKey();
+			}
+		}
+
+
+		return allPath.get(src1).get(dest1).get(1).getKey();
 	}
 
 
@@ -134,6 +143,7 @@ public class Ex2_Client implements Runnable{
 
 		String g = game.getGraph();
 		loadGraph(g,gg);
+		LinkedList<node_data>check=(LinkedList<node_data>) gg.shortestPath(20,11);
 		setAllPath(gg);
 		setAllPathDis(gg);
 		nodeLocation(gg.getGraph());
