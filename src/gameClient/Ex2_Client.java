@@ -21,6 +21,8 @@ public class Ex2_Client implements Runnable{
 	DWGraph_Algo gg=new DWGraph_Algo();
 	HashMap<Integer,edge_data>srcList=new HashMap<>();
 	LinkedList<geo_location>locations=new LinkedList<>();
+	boolean[]GoingToEat;
+
 
 
 	public static void main(String[] a) {
@@ -30,10 +32,12 @@ public class Ex2_Client implements Runnable{
 	
 	@Override
 	public void run() {
-		int scenario_num = 1;
+		int scenario_num = 11;
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
 	//	int id = 999;
 	//	game.login(id);
+
+
 		init(game);
 		System.out.println();
 		game.startGame();// start game!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -45,6 +49,17 @@ public class Ex2_Client implements Runnable{
 			moveAgents(game, gg.getGraph());
 			try {
 				if(ind%1==0) {_win.repaint();}
+				int ReadyToEat=GoingToEat();
+//				if(ReadyToEat>GoingToEat.length/2){
+//					dt=100;
+//				}
+				if(ReadyToEat>0){
+					dt=90;
+				}
+
+				else {
+					dt=120;
+				}
 				Thread.sleep(dt);
 				ind++;
 			}
@@ -89,34 +104,42 @@ public class Ex2_Client implements Runnable{
 			Arena.updateEdge(p,gg);
 		}
 		for(CL_Agent agent:log){
+
 			int dest;
 			if(agent.get_curr_edge()==null){
+				if(agent.getSrcNode()==srcList.get(agent.getID()).getDest()){
+					GoingToEat[agent.getID()]=false;
+				}
 
 				if(srcList.get(agent.getID()).getSrc()== agent.getSrcNode()){
 					dest=srcList.get(agent.getID()).getDest();
+					GoingToEat[agent.getID()]=true;
 				}
 				else{
 					dest=nextNode(gg,agent);
 				}
 				game.chooseNextEdge(agent.getID(),dest);
-				//System.out.println("Agent "+agent.getID()+"go to "+dest);
+				System.out.println("[Agent: "+agent.getID()+",current node:"+agent.getSrcNode()+"]"+"go to edge "+srcList.get(agent.getID()).getSrc()+"----->"+srcList.get(agent.getID()).getDest()+" and the next node is: "+dest);
 
 
 			}
 		}
-	}
+	}//check!!!
 	private  int nextNode(directed_weighted_graph g, CL_Agent agent){
+		if(agent.getSrcNode()==21&&srcList.get(agent.getID()).getSrc()==25){
+			System.out.println();
+		}
 		double currentDistance=Integer.MAX_VALUE;
 		int dest=-1;
 		for(CL_Pokemon p: _ar.getPokemons()){
 			double TempDistance=this.allPathDis.get(agent.getSrcNode()).get(p.get_edge().getSrc());
-
 			if(TempDistance<currentDistance && TempDistance!=-1){
+				if(srcList.values().contains(p.get_edge())&& srcList.get(agent.getID())!=p.get_edge()) continue;
+
 				currentDistance=TempDistance;
 				if(currentDistance==0){
 					return p.get_edge().getDest() ;
 				}
-				//dest=p.get_edge().getSrc();
 				srcList.put(agent.getID(),p.get_edge());
 			}
 
@@ -125,10 +148,11 @@ public class Ex2_Client implements Runnable{
 		int dest1=srcList.get(agent.getID()).getSrc();
 
 
-		LinkedList<node_data>answer=(LinkedList)allPath.get(agent.getSrcNode()).get(dest1);
+		LinkedList<node_data>answer=(LinkedList)allPath.get(src1).get(dest1);
 		if(answer.size()>2) {
 			LinkedList<node_data> temp = (LinkedList) allPath.get(answer.get(1).getKey()).get(dest1);
 			if (temp.get(1).getKey() == answer.get(0).getKey()) {
+
 				return temp.get(2).getKey();
 			}
 		}
@@ -164,24 +188,32 @@ public class Ex2_Client implements Runnable{
 			line = new JSONObject(info);
 			JSONObject GameServerInfo = line.getJSONObject("GameServer");
 			int AgentNum = GameServerInfo.getInt("agents");// number of
+			GoingToEat=new boolean[AgentNum];
 			int src_node = 0;  // arbitrary node, you should start at one of the pokemon
 			ArrayList<CL_Pokemon> AllPokemones= Arena.json2Pokemons(game.getPokemons());//pokemon list
+			CL_Pokemon []MaxPokValue=new CL_Pokemon[AgentNum];
 			for(int a = 0;a<AllPokemones.size();a++) { // pokemones size-->update edges
 				Arena.updateEdge(AllPokemones.get(a),gg.getGraph());
+				HighValuePok(AllPokemones.get(a),MaxPokValue);
 			}
 			int a=0;
 			  // set agent to vertex
-				for (CL_Pokemon p : AllPokemones) {//check connectivity!!!!!!!!!!!!!!!!!!!!!!!
-					if(a<AgentNum) {
-						game.addAgent(p.get_edge().getSrc());
-						srcList.put(a,p.get_edge());
-						//AllAgent.add();
+			for(int i=0;i<AgentNum;i++){
+				game.addAgent(MaxPokValue[i].get_edge().getSrc());
+				srcList.put(i,MaxPokValue[i].get_edge());
+			}
 
-						//LinkedList<node_data> l = new LinkedList<node_data>();
-						//l.add(gg.getGraph().getNode(p.get_edge().getDest()));
-						a++;
-					}
-				}
+//				for (CL_Pokemon p : AllPokemones) {//check connectivity!!!!!!!!!!!!!!!!!!!!!!!
+//					if(a<AgentNum) {
+//						game.addAgent(p.get_edge().getSrc());
+//						srcList.put(a,p.get_edge());
+//						//AllAgent.add();
+//
+//						//LinkedList<node_data> l = new LinkedList<node_data>();
+//						//l.add(gg.getGraph().getNode(p.get_edge().getDest()));
+//						a++;
+//					}
+//				}
 				for(node_data n:gg.getGraph().getV()){
 					if(a<AgentNum){
 						CL_Agent cl=new CL_Agent(gg.getGraph(),n.getKey());
@@ -265,5 +297,35 @@ public class Ex2_Client implements Runnable{
 		}
 
 	}
+	public void HighValuePok(CL_Pokemon p,CL_Pokemon[] arr) {
+		for (int i = 0; i < arr.length; i++) {
+			if (arr[i] == null) {
+				arr[i] = p;
+				break;
+			}
+			if (arr[i].getValue() < p.getValue()) {
+				CL_Pokemon temp1 = arr[i];
+				arr[i] = p;
+				for (int j = i + 1; j < arr.length; j++) {
+					CL_Pokemon temp2 = arr[j];
+					arr[j] = temp1;
+					temp1 = temp2;
+				}
+				break;
+			}
+
+		}
+	}
+		public int GoingToEat(){
+		int counter=0;
+			for(int i=0;i<GoingToEat.length;i++){
+				if(GoingToEat[i]==true) counter++;
+			}
+			return counter;
+
+		}
+
+
+
 
 }

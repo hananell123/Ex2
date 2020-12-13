@@ -2,8 +2,9 @@ package myClasses;
 
 import api.geo_location;
 import api.node_data;
+import org.jetbrains.annotations.NotNull;
 
-public class NodeData implements node_data, Comparable<node_data>  {
+public class NodeData implements node_data,Comparable<node_data>  {
 
     private int key,tag=0;
     private static int key_counter=0;
@@ -70,19 +71,19 @@ public class NodeData implements node_data, Comparable<node_data>  {
     this.tag=t;
     }
 
-//    @Override
-//    public String toString() {
-//        return  "pos: "+ pos + " id: " + key ;
-//
-//    }
-
     @Override
-    public int compareTo(node_data o) {
+    public int compareTo( node_data o) {
         int ans = 0;
         if (this.getTag() - o.getTag() > 0) ans = 1;
         else if (this.getTag() - o.getTag() < 0) ans = -1;
         return ans;
     }
+
+    //    @Override
+//    public String toString() {
+//        return  "pos: "+ pos + " id: " + key ;
+//
+//    }
 
 
 }

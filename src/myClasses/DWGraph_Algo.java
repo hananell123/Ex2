@@ -19,6 +19,40 @@ import static java.lang.Double.POSITIVE_INFINITY;
 public class DWGraph_Algo implements dw_graph_algorithms {
     directed_weighted_graph gAlgo = new DWGraph_DS();
 
+//    private class NodeForPath implements Comparable<NodeForPath>{
+//        private node_data n;
+//        private double w;
+//
+//        public NodeForPath(node_data n,double weight){
+//            this.n=n;
+//            this.w=weight;
+//        }
+//
+//        public void setN(node_data n) {
+//            this.n = n;
+//        }
+//
+//        public void setW(double w) {
+//            this.w = w;
+//        }
+//
+//        public double getW() {
+//            return w;
+//        }
+//
+//        public node_data getN() {
+//            return n;
+//        }
+//        @Override
+//        public int compareTo(NodeForPath o){
+//            int ans = 0;
+//            if (this.getW() - o.getW() > 0) ans = 1;
+//            else if (this.getW() - o.getW() < 0) ans = -1;
+//            return ans;
+//
+//        }
+
+
     @Override
     public void init(directed_weighted_graph g) {
         this.gAlgo = g;
@@ -124,6 +158,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     @Override
     public List<node_data> shortestPath(int src, int dest) {
+
         HashMap<Integer, Integer> parents = new HashMap<>();
         LinkedList<node_data> ans = new LinkedList<>();
 
