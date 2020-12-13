@@ -50,15 +50,16 @@ public class Ex2_Client implements Runnable{
 			try {
 				if(ind%1==0) {_win.repaint();}
 				int ReadyToEat=GoingToEat();
-//				if(ReadyToEat>GoingToEat.length/2){
-//					dt=100;
-//				}
+				if(ReadyToEat>GoingToEat.length/2){
+					dt=80;
+				}
 				if(ReadyToEat>0){
 					dt=90;
 				}
 
 				else {
-					dt=120;
+					dt=160;
+
 				}
 				Thread.sleep(dt);
 				ind++;
@@ -167,7 +168,7 @@ public class Ex2_Client implements Runnable{
 
 		String g = game.getGraph();
 		loadGraph(g,gg);
-		LinkedList<node_data>check=(LinkedList<node_data>) gg.shortestPath(20,11);
+		//LinkedList<node_data>check=(LinkedList<node_data>) gg.shortestPath(20,11);
 		setAllPath(gg);
 		setAllPathDis(gg);
 		nodeLocation(gg.getGraph());

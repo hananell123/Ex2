@@ -18,39 +18,42 @@ import static java.lang.Double.POSITIVE_INFINITY;
 
 public class DWGraph_Algo implements dw_graph_algorithms {
     directed_weighted_graph gAlgo = new DWGraph_DS();
+    HashMap<Integer, Double> distance=new HashMap<>();
 
-//    private class NodeForPath implements Comparable<NodeForPath>{
-//        private node_data n;
-//        private double w;
-//
-//        public NodeForPath(node_data n,double weight){
-//            this.n=n;
-//            this.w=weight;
-//        }
-//
-//        public void setN(node_data n) {
-//            this.n = n;
-//        }
-//
-//        public void setW(double w) {
-//            this.w = w;
-//        }
-//
-//        public double getW() {
-//            return w;
-//        }
-//
-//        public node_data getN() {
-//            return n;
-//        }
-//        @Override
-//        public int compareTo(NodeForPath o){
-//            int ans = 0;
-//            if (this.getW() - o.getW() > 0) ans = 1;
-//            else if (this.getW() - o.getW() < 0) ans = -1;
-//            return ans;
-//
-//        }
+
+    private class NodeForPath implements Comparable<NodeForPath> {
+        private node_data n;
+        private double w;
+
+        public NodeForPath(node_data n, double weight) {
+            this.n = n;
+            this.w = weight;
+        }
+
+        public void setN(node_data n) {
+            this.n = n;
+        }
+
+        public void setW(double w) {
+            this.w = w;
+        }
+
+        public double getW() {
+            return w;
+        }
+
+        public node_data getN() {
+            return n;
+        }
+        @Override
+        public int compareTo(NodeForPath o) {
+            int ans = 0;
+            if (this.getW() - o.getW() > 0) ans = 1;
+            else if (this.getW() - o.getW() < 0) ans = -1;
+            return ans;
+
+        }
+    }
 
 
     @Override
@@ -121,7 +124,8 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         if (gAlgo.getNode(src) == null || gAlgo.getNode(dest) == null) return -1;
         if (gAlgo.getE(src) == null || ((DWGraph_DS) (gAlgo)).getPointOnMe(dest).isEmpty()) return -1;
         if (src == dest) return 0;
-        HashMap<Integer, Double> distance = new HashMap<>();
+        //HashMap<Integer, Double>
+        distance = new HashMap<>();
         if (src == dest) return 0;
         if (gAlgo.getNode(src) == null || gAlgo.getNode(dest) == null) return -1;
         if (gAlgo.getE(src).isEmpty()) return -1;
@@ -168,36 +172,39 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             ans.addLast(gAlgo.getNode(src));
             return ans;
         }
-        HashMap<Integer, Double> distance = new HashMap<>();
+        HashMap<Integer, NodeForPath> distance = new HashMap<>();
         if (gAlgo.getNode(src) == null || gAlgo.getNode(dest) == null) return null;
         if (gAlgo.getE(src).isEmpty()) return null;
 
-        Queue<node_data> q = new PriorityQueue<node_data>();
+        Queue<NodeForPath> q = new PriorityQueue<NodeForPath>();
 
 
         for (node_data t : gAlgo.getV()) {
-            distance.put(t.getKey(), POSITIVE_INFINITY);
             t.setTag(0);
+            NodeForPath temp=new NodeForPath(t,POSITIVE_INFINITY);
+            distance.put(t.getKey(), temp);
         }
 
-
-        distance.put(src, 0.0);
-        q.add(gAlgo.getNode(src));
+        //distance.put(src, 0.0);
+        q.add(distance.get(src));
+        distance.get(src).setW(0.0);
         while (!q.isEmpty()) {
 
-            node_data u = q.poll();
+           // node_data u = q.poll();
+            NodeForPath u=q.poll();
 
-            for (edge_data v : gAlgo.getE(u.getKey())) {
-                node_data tempNode = gAlgo.getNode(v.getDest());
-                if (tempNode.getTag() == 0) {
-                    if (distance.get(tempNode.getKey()) > distance.get(u.getKey()) + v.getWeight()) {
-                        distance.put(tempNode.getKey(), distance.get(u.getKey()) + v.getWeight());
-                        parents.put(tempNode.getKey(), u.getKey());
+            for (edge_data v : gAlgo.getE(u.getN().getKey())) {
+                NodeForPath tempNode = distance.get(v.getDest());
+                if (tempNode.getN().getTag() == 0) {
+                    if (tempNode.getW() > distance.get(u.getN().getKey()).getW() + v.getWeight()) {
+                        tempNode.setW(distance.get(u.getN().getKey()).getW() + v.getWeight());
+                        //distance.put(tempNode.getKey(), distance.get(u.getKey()) + v.getWeight());
+                        parents.put(tempNode.getN().getKey(), u.getN().getKey());
                         q.add(tempNode);
                     }
                 }
             }
-            u.setTag(1);
+            u.getN().setTag(1);
         }
         //if(distance.get(dest)==POSITIVE_INFINITY) return -1;
         //return distance.get(dest);
