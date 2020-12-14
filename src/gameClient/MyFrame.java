@@ -36,27 +36,32 @@ public class MyFrame extends JFrame{
 	private Graphics gr;
 	static int pokIndex = 0;
 	static int AgentIndex = 0;
-	private BufferedImage NodeIm1=null;
 
 	//private Image im ;
 	//private Graphics gr;
 	private BufferedImage AgentIm0 = null;
-	private BufferedImage AgentIm1 = null;
-	private BufferedImage pokIm0 = null;
-	private BufferedImage pokIm1 = null;
-	private BufferedImage pokIm2 = null;
-	private BufferedImage pokIm3 = null;
-	private BufferedImage pokIm4 = null;
-	private BufferedImage pokIm5 = null;
+//	 try {
+//		AgentIm1 = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\agent.png"));
+//	} catch (IOException ex) {
+//		// handle exception...
+//	};
+	private BufferedImage AgentIm1 = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\agent.png"));
+	private BufferedImage pokIm0  = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\pok1.png"));;
+	private BufferedImage pokIm1  = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\node.png"));;
 	private BufferedImage background=null;
+	private BufferedImage NodeIm1 = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\node.png"));
 
-	MyFrame(String a) {
+
+	MyFrame(String a) throws IOException {
 		super(a);
 		int _ind = 0;
 	}
+
 	public void update(Arena ar) {
 		this._ar = ar;
 		updateFrame();
+
+
 	}
 
 	private void updateFrame() {
@@ -78,6 +83,7 @@ public class MyFrame extends JFrame{
 //
 //	}
 	public void paint(Graphics g){
+
 		im = createImage(getWidth() , getHeight());
 		gr = im.getGraphics();
 		try {
@@ -111,11 +117,11 @@ public class MyFrame extends JFrame{
 	}
 	private void drawGraph(Graphics g) throws IOException {
 
-		try {
-			background = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\backgroundLogo.png"));
-		} catch (IOException ex) {
-			// handle exception...
-		}
+//		try {
+//			background = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\backgroundLogo.png"));
+//		} catch (IOException ex) {
+//			// handle exception...
+//		}
 
 		directed_weighted_graph gg = _ar.getGraph();
 		Iterator<node_data> iter = gg.getV().iterator();
@@ -134,11 +140,6 @@ public class MyFrame extends JFrame{
 		}
 	}
 	private void drawPokemons(Graphics g) {
-		try {
-			pokIm0 = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\pok1.png"));
-		} catch (IOException ex) {
-			// handle exception...
-		}
 
 
 		ImageObserver ob = new ImageIcon().getImageObserver();
@@ -147,7 +148,7 @@ public class MyFrame extends JFrame{
 		List<CL_Pokemon> fs = _ar.getPokemons();
 		if(fs!=null) {
 		Iterator<CL_Pokemon> itr = fs.iterator();
-		
+		int index=0;
 		while(itr.hasNext()) {
 			
 			CL_Pokemon f = itr.next();
@@ -159,11 +160,13 @@ public class MyFrame extends JFrame{
 
 				geo_location fp = this._w2f.world2frame(c);
 				//g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
-			//	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
+				//g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
 
 				g.drawImage(pokIm0,(int) fp.x() - r-5, (int) fp.y() - r-5, 2 * (r+10), 2 * (r+10) , ob );
-				pokIndex++;
-				pokIndex=pokIndex%6;
+
+				index++;
+//				pokIndex++;
+//				pokIndex=pokIndex%6;
 
 			}
 		}
@@ -171,13 +174,11 @@ public class MyFrame extends JFrame{
 		}
 	}
 	private void drawAgants(Graphics g) {
+		g.setFont(new Font("TimesRoman", Font.PLAIN, 20));
+		g.setColor(Color.black);
+		List<CL_Agent> fs = _ar.getAgents();
 
 
-		try {
-			AgentIm1 = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\agent.png"));
-		} catch (IOException ex) {
-			// handle exception...
-		}
 		g.drawImage(background, 0, 0, null);
 
 
@@ -188,8 +189,14 @@ public class MyFrame extends JFrame{
 
 
 		List<CL_Agent> rs = _ar.getAgents();
+		int x=getWidth()/2-20;
+		int y=50;
 		if (rs != null) {
 			for (CL_Agent Ag : rs) {
+				g.drawString("Agent: "+Ag.getID()+" points: "+Ag.getValue()+" his speed is: "+Ag.getSpeed(),x,y+=20);
+
+
+
 				//Iterator<OOP_Point3D> itr = rs.iterator();
 				g.setColor(Color.red);
 				int i = 0;
@@ -203,7 +210,7 @@ public class MyFrame extends JFrame{
 						//g.fillOval((int) fp.x() - r, (int) fp.y() - r, 2 * r, 2 * r);
 						//AgentIm = pokImages[0];
 						g.drawImage(AgentIm1,(int) fp.x() - r, (int) fp.y() - r, 3 * (r+10), 3 * (r+10) , ob );
-						g.drawString(""+(int)Ag.getValue(), (int) fp.x() - r, (int) fp.y() - r+2);
+						//g.drawString(""+(int)Ag.getValue(), (int) fp.x() - r, (int) fp.y() - r+2);
 
 
 
@@ -214,20 +221,16 @@ public class MyFrame extends JFrame{
 	}
 	private void drawNode(node_data n, int r, Graphics g) throws IOException {
 
-		try {
-			NodeIm1 = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\node.png"));
-		} catch (IOException ex) {
-			// handle exception...
-		}
+
 		ImageObserver ob = new ImageIcon().getImageObserver();
 
 
 		geo_location pos = n.getLocation();
 		geo_location fp = this._w2f.world2frame(pos);
 		//g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
-		//g.drawImage(image,(int)fp.x()-r-10,(int)fp.y()-r-5,4*r,3*r,this);
-		g.drawString(""+n.getKey(), (int)fp.x(), (int)fp.y()-4*r);
-		g.drawImage(NodeIm1,(int) fp.x() - r, (int) fp.y() - r, 2 * (r+10), 2 * (r+10) , ob );
+		g.drawImage(NodeIm1,(int)fp.x()-r-10,(int)fp.y()-r-5,4*r+5,5*r,this);
+//		g.drawString(""+n.getKey(), (int)fp.x(), (int)fp.y()-4*r);
+//		g.drawImage(NodeIm1,(int) fp.x() - r, (int) fp.y() - r, 2 * (r+10), 2 * (r+10) , ob );
 
 	}
 	private void drawEdge(edge_data e, Graphics g) {

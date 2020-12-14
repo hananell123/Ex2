@@ -7,12 +7,15 @@ import myClasses.edge;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.List;
 
-public class Ex2_Client implements Runnable{
+public class Ex2_Client implements Runnable {
 	private static MyFrame _win;
 	private static Arena _ar;
 	private HashMap<Integer,HashMap<Integer,List<node_data>>>allPath=new HashMap<>();
@@ -29,6 +32,11 @@ public class Ex2_Client implements Runnable{
 		Thread client = new Thread(new Ex2_Client());
 		client.start();
 	}
+	private void getTime(Graphics g,game_service game){
+
+		g.drawString("Time to end: "+(int)game.timeToEnd(),0,0);
+
+	}
 	
 	@Override
 	public void run() {
@@ -38,27 +46,38 @@ public class Ex2_Client implements Runnable{
 	//	game.login(id);
 
 
-		init(game);
+
+		try {
+			init(game);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		System.out.println();
 		game.startGame();// start game!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		_win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
-		int ind=0;
+		int ind=1;
 		long dt=100;
+		int LastTime=0;
 		
 		while(game.isRunning()) {
 			moveAgents(game, gg.getGraph());
 			try {
-				if(ind%1==0) {_win.repaint();}
+				//if(ind%1==0) {
+				_win.repaint();
+				int Timer=(int)game.timeToEnd();
+				if(Timer!=LastTime){
+					System.out.println("Time to end "+(int)game.timeToEnd()/1000);
+				}
 				int ReadyToEat=GoingToEat();
 				if(ReadyToEat>GoingToEat.length/2){
-					dt=80;
+					dt=90;
 				}
 				if(ReadyToEat>0){
-					dt=90;
+					dt=110;
 				}
 
 				else {
-					dt=160;
+					dt=150;
 
 				}
 				Thread.sleep(dt);
@@ -67,6 +86,7 @@ public class Ex2_Client implements Runnable{
 			catch(Exception e) {
 				e.printStackTrace();
 			}
+			LastTime=(int)game.timeToEnd();
 		}
 		String res = game.toString();
 
@@ -120,7 +140,7 @@ public class Ex2_Client implements Runnable{
 					dest=nextNode(gg,agent);
 				}
 				game.chooseNextEdge(agent.getID(),dest);
-				System.out.println("[Agent: "+agent.getID()+",current node:"+agent.getSrcNode()+"]"+"go to edge "+srcList.get(agent.getID()).getSrc()+"----->"+srcList.get(agent.getID()).getDest()+" and the next node is: "+dest);
+				//System.out.println("[Agent: "+agent.getID()+",current node:"+agent.getSrcNode()+"]"+"go to edge "+srcList.get(agent.getID()).getSrc()+"----->"+srcList.get(agent.getID()).getDest()+" and the next node is: "+dest);
 
 
 			}
@@ -164,7 +184,7 @@ public class Ex2_Client implements Runnable{
 
 
 
-	private void init(game_service game) {
+	private void init(game_service game) throws IOException {
 
 		String g = game.getGraph();
 		loadGraph(g,gg);
