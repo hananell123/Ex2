@@ -8,10 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 
@@ -24,74 +21,84 @@ public class Ex2_Client implements Runnable {
 	DWGraph_Algo gg=new DWGraph_Algo();
 	HashMap<Integer,edge_data>srcList=new HashMap<>();
 	LinkedList<geo_location>locations=new LinkedList<>();
-	boolean[]GoingToEat;
+	private boolean[]GoingToEat;
+	private int AvrgSpeed=1;
+	private game_service game=null;
+
+
 
 
 
 	public static void main(String[] a) {
-		Thread client = new Thread(new Ex2_Client());
-		client.start();
-	}
-	private void getTime(Graphics g,game_service game){
 
-		g.drawString("Time to end: "+(int)game.timeToEnd(),0,0);
+			Thread client = new Thread(new Ex2_Client());
+			client.start();
 
 	}
+
+
 	
 	@Override
 	public void run() {
-		int scenario_num = 11;
-		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
-	//	int id = 999;
-	//	game.login(id);
+			int scenario_num = 11;
+			 game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
+//				int id = 999;
+//				game.login();
 
 
-
-		try {
-			init(game);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println();
-		game.startGame();// start game!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		_win.setTitle("Ex2 - OOP: (NONE trivial Solution) "+game.toString());
-		int ind=1;
-		long dt=100;
-		int LastTime=0;
-		
-		while(game.isRunning()) {
-			moveAgents(game, gg.getGraph());
 			try {
-				//if(ind%1==0) {
-				_win.repaint();
-				int Timer=(int)game.timeToEnd();
-				if(Timer!=LastTime){
-					System.out.println("Time to end "+(int)game.timeToEnd()/1000);
-				}
-				int ReadyToEat=GoingToEat();
-				if(ReadyToEat>GoingToEat.length/2){
-					dt=90;
-				}
-				if(ReadyToEat>0){
-					dt=110;
-				}
-
-				else {
-					dt=150;
-
-				}
-				Thread.sleep(dt);
-				ind++;
-			}
-			catch(Exception e) {
+				init(game);
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			LastTime=(int)game.timeToEnd();
-		}
-		String res = game.toString();
+		System.out.println();
+			game.startGame();// start game!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			_win.setTitle("Ex2 - OOP: (NONE trivial Solution) " + game.toString());
+			int ind = 1;
+			long dt = 100;
+			int LastTime = 17;
+			boolean t = false;
 
-		System.out.println(res);
-		System.exit(0);
+
+			while (game.isRunning()) {
+				_win.getTime(game);
+
+
+
+				moveAgents(game, gg.getGraph());
+				try {
+					//if(ind%1==0) {
+					_win.repaint();
+
+
+					if(AvrgSpeed<3){
+						dt=90;
+					}
+					else {
+						int ReadyToEat = GoingToEat();
+//						if (ReadyToEat > GoingToEat.length / 2) {
+//							dt = 90;
+//						}
+						if (ReadyToEat > 0) {
+							dt = 200;
+						} else {
+							dt = 200;
+
+						}
+					}
+					Thread.sleep(dt);
+					ind++;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				LastTime = (int) game.timeToEnd();
+			}
+			String res = game.toString();
+
+			System.out.println(res);
+
+			System.exit(0);
+
 	}
 	//	private static void moveAgants(game_service game, directed_weighted_graph gg) {
 //		String lg = game.move();
@@ -115,6 +122,7 @@ public class Ex2_Client implements Runnable {
 //		}
 //	}
 	public void moveAgents(game_service game, directed_weighted_graph gg) {
+		int newSpeed=0;
 		String lg = game.move();
 		List<CL_Agent> log = Arena.getAgents(lg, gg);
 		_ar.setAgents(log);
@@ -123,9 +131,10 @@ public class Ex2_Client implements Runnable {
 		_ar.setPokemons(ffs);
 		for(CL_Pokemon p:ffs){
 			Arena.updateEdge(p,gg);
+
 		}
 		for(CL_Agent agent:log){
-
+			newSpeed+=agent.getSpeed();
 			int dest;
 			if(agent.get_curr_edge()==null){
 				if(agent.getSrcNode()==srcList.get(agent.getID()).getDest()){
@@ -145,26 +154,27 @@ public class Ex2_Client implements Runnable {
 
 			}
 		}
+		AvrgSpeed=newSpeed/_ar._agents.size();
 	}//check!!!
 	private  int nextNode(directed_weighted_graph g, CL_Agent agent){
-		if(agent.getSrcNode()==21&&srcList.get(agent.getID()).getSrc()==25){
-			System.out.println();
-		}
+
 		double currentDistance=Integer.MAX_VALUE;
 		int dest=-1;
-		for(CL_Pokemon p: _ar.getPokemons()){
-			double TempDistance=this.allPathDis.get(agent.getSrcNode()).get(p.get_edge().getSrc());
-			if(TempDistance<currentDistance && TempDistance!=-1){
-				if(srcList.values().contains(p.get_edge())&& srcList.get(agent.getID())!=p.get_edge()) continue;
+		for(CL_Pokemon p: _ar.getPokemons()) {
+			double TempDistance = this.allPathDis.get(agent.getSrcNode()).get(p.get_edge().getSrc());
+			if (TempDistance < currentDistance && TempDistance != -1) {
+				if (srcList.values().contains(p.get_edge()) && srcList.get(agent.getID()) != p.get_edge()) continue;
 
-				currentDistance=TempDistance;
-				if(currentDistance==0){
-					return p.get_edge().getDest() ;
+
+				currentDistance = TempDistance;
+				if (currentDistance == 0) {
+					return p.get_edge().getDest();
 				}
-				srcList.put(agent.getID(),p.get_edge());
+				srcList.put(agent.getID(), p.get_edge());
 			}
-
 		}
+
+
 		int src1=agent.getSrcNode();
 		int dest1=srcList.get(agent.getID()).getSrc();
 
