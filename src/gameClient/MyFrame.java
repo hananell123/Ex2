@@ -52,6 +52,7 @@ public class MyFrame extends JFrame{
 	private BufferedImage background=null;
 	private BufferedImage NodeIm1 = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\node.png"));
 	private static int timer;
+	private  int level;
 
 
 	MyFrame(String a) throws IOException {
@@ -72,8 +73,8 @@ public class MyFrame extends JFrame{
 
 
 
-		Range rx = new Range(20,this.getWidth()-20);
-		Range ry = new Range(this.getHeight()-10,150);
+		Range rx = new Range(20,this.getWidth()-60);
+		Range ry = new Range(this.getHeight()-50,150);
 		Range2D frame = new Range2D(rx,ry);
 		directed_weighted_graph g = _ar.getGraph();
 		_w2f = Arena.w2f(g,frame);
@@ -91,6 +92,9 @@ public class MyFrame extends JFrame{
 //	}
 	public void getTime(game_service game){
 		timer=(int) (game.timeToEnd()/1000);
+	}
+	public void getLevel(int level){
+		this.level=level;
 	}
 
 	public void paint(Graphics g){
@@ -163,6 +167,7 @@ public class MyFrame extends JFrame{
 		Iterator<CL_Pokemon> itr = fs.iterator();
 		int index=0;
 		while(itr.hasNext()) {
+
 			
 			CL_Pokemon f = itr.next();
 			Point3D c = f.getLocation();
@@ -231,7 +236,7 @@ public class MyFrame extends JFrame{
 						//g.fillOval((int) fp.x() - r, (int) fp.y() - r, 2 * r, 2 * r);
 						//AgentIm = pokImages[0];
 						g.drawImage(AgentIm1,(int) fp.x() - r-20, (int) fp.y() - r-10, 3 * (r+10), 3 * (r+10) , ob );
-						//g.drawString(""+(int)Ag.getValue(), (int) fp.x() - r, (int) fp.y() - r+2);
+						g.drawString(""+(int)Ag.getID(), (int) fp.x() - r, (int) fp.y() - r+2);
 
 
 
@@ -242,8 +247,8 @@ public class MyFrame extends JFrame{
 
         if(timer>5) {
         	g.setColor(Color.black);
-			g.setFont(new Font("TimesRoman", Font.CENTER_BASELINE, getWidth()/35));
-			g.drawString("Remaining time "+timer , (int) (getWidth()/2.5),getWidth()/19);
+			g.setFont(new Font("TimesRoman", Font.CENTER_BASELINE, getWidth()/50));
+			g.drawString("Level:"+level+" Remaining time "+timer , (int) (getWidth()/2.5),getWidth()/19);
 
 
 		}
