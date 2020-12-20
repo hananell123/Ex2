@@ -176,7 +176,7 @@ public class MyFrame extends JFrame{
 				}
                 if(f.get_edge()!=null)
 					g.setFont(new Font("TimesRoman", Font.CENTER_BASELINE, 25));
-				//g.drawString("distance from src "+f.get_edge().getSrc()+" is "+_ar.getGraph().getNode(f.get_edge().getSrc()).getLocation().distance(f.getLocation()),(int) fp.x() - r - 20, (int) fp.y() - r - 10);
+				//g.drawString("dest is"+f.get_edge().getDest()+"distance from src "+f.get_edge().getSrc()+" is "+_ar.getGraph().getNode(f.get_edge().getSrc()).getLocation().distance(f.getLocation()),(int) fp.x() - r - 20, (int) fp.y() - r - 10);
 
 
 			}

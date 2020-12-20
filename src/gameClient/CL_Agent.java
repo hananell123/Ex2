@@ -26,9 +26,12 @@ public class CL_Agent {
 		private double _value;
 
 
-		
-		
-		public CL_Agent(directed_weighted_graph g, int start_node)
+	/**
+	 * agent constructor
+	 * @param g
+	 * @param start_node
+	 */
+	public CL_Agent(directed_weighted_graph g, int start_node)
 		{
 			_gg = g;
 		//	setMoney(0);
@@ -38,10 +41,14 @@ public class CL_Agent {
 			setSpeed(0);
 
 		}
+
+	/**
+	 * this method update the current data of the agent
+	 * @param json all of the game data
+	 */
 		public void update(String json) {
 			JSONObject line;
 			try {
-				// "GameServer":{"graph":"A0","pokemons":3,"agents":1}}
 				line = new JSONObject(json);
 				JSONObject ttt = line.getJSONObject("Agent");
 				int id = ttt.getInt("id");
@@ -82,8 +89,13 @@ public class CL_Agent {
 			return ans;	
 		}
 		private void setMoney(double v) {_value = v;}
-	
-		public boolean setNextNode(int dest) {
+
+	/**
+	 *  set the given id to be the agent next destination
+	 * @param dest node_id for the next node destination
+	 * @return
+	 */
+	public boolean setNextNode(int dest) {
 			boolean ans = false;
 			int src = this._curr_node.getKey();
 			this._curr_edge = _gg.getEdge(src, dest);
@@ -147,33 +159,11 @@ public class CL_Agent {
 		public void set_curr_fruit(CL_Pokemon curr_fruit) {
 			this._curr_fruit = curr_fruit;
 		}
-//		public void set_SDT(long ddtt) {
-//			long ddt = ddtt;
-//			if(this._curr_edge!=null) {
-//				double w = get_curr_edge().getWeight();
-//				geo_location dest = _gg.getNode(get_curr_edge().getDest()).getLocation();
-//				geo_location src = _gg.getNode(get_curr_edge().getSrc()).getLocation();
-//				double de = src.distance(dest);
-//				double dist = _pos.distance(dest);
-//				if(this.get_curr_fruit().get_edge()==this.get_curr_edge()) {
-//					 dist = _curr_fruit.getLocation().distance(this._pos);
-//				}
-//				double norm = dist/de;
-//				double dt = w*norm / this.getSpeed();
-//				ddt = (long)(1000.0*dt);
-//			}
-//			this.setisAvailableAgent((int)ddt);
-//		}
 		
 		public edge_data get_curr_edge() {
 			return this._curr_edge;
 		}
-		public long getisAvailableAgent() {
-			return isAvailableAgent;
-		}
-		public void setisAvailableAgent(int isAvailableAgent) {
-			this.isAvailableAgent = isAvailableAgent;
-		}
+
 
 
 

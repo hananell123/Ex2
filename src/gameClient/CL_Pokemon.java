@@ -3,6 +3,9 @@ import api.edge_data;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 
+/**
+ * represent the pokemons, main use to get the data of the location and the value of the pokemons
+ */
 public class CL_Pokemon {
 	private edge_data _edge;
 	private double _value;

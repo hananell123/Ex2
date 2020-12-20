@@ -10,7 +10,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Observable;
-
+/**
+ *This class is responsible for displaying
+ * the login screen before the start of the game.
+ * The GUI frame gets: user_id , game scenario.
+ * These values are transmitted to "run" function in
+ * Ex2_Client.
+ *
+ */
 public class GUILogIn implements ActionListener {
     private static JLabel gameLevelLabel;
     private static JTextField gameLevelText;

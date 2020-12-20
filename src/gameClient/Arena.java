@@ -108,7 +108,12 @@ public class Arena {
 		this._info = _info;
 	}
 
-	////////////////////////////////////////////////////
+	/**
+	 *
+	 * @param aa
+	 * @param gg
+	 * @return list of all the agent in the game
+	 */
 	public static List<CL_Agent> getAgents(String aa, directed_weighted_graph gg) {
 		ArrayList<CL_Agent> ans = new ArrayList<CL_Agent>();
 		try {
@@ -126,6 +131,11 @@ public class Arena {
 		return ans;
 	}
 
+	/**
+	 *
+	 * @param fs - jason file from the server
+	 * @return update list of all the pokemons and their data
+	 */
 	public static ArrayList<CL_Pokemon> json2Pokemons(String fs) {
 		ArrayList<CL_Pokemon> ans = new ArrayList<CL_Pokemon>();
 		try {
@@ -147,6 +157,13 @@ public class Arena {
 		return ans;
 	}
 
+	/**
+	 * update each pokemon wich edge he located on by his location (data from the server)
+	 * run on all the graph edge and search the edge that the pokemon located on
+	 * using IsOnEdge method
+	 * @param fr given pokemon
+	 * @param g game graph
+	 */
 	public static void updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
 
 		Iterator<node_data> itr = g.getV().iterator();
@@ -167,6 +184,14 @@ public class Arena {
 		}
 	}
 
+	/**
+	 * this is the important method, chack the size of the edge (distance between src and dest)
+	 * and check if its equals to the distance (pokemon,src)+ distance(pokemon,dest)
+	 * @param p pokemon location
+	 * @param src node location
+	 * @param dest node location
+	 * @return
+	 */
 				private static boolean isOnEdge (geo_location p, geo_location src, geo_location dest ){
 
 					boolean ans = false;
@@ -182,6 +207,15 @@ public class Arena {
 					geo_location dest = g.getNode(d).getLocation();
 					return isOnEdge(p, src, dest);
 				}
+
+	/**
+	 * this method check if the given edge can  be (not necessarily) the Pokemon edge by it type
+	 * @param p the pokemon location
+	 * @param e edge that may be the pokemon edge
+	 * @param type on witch side of the edge the pokemon located
+	 * @param g the game graph
+	 * @return
+	 */
 				private static boolean isOnEdge (geo_location p, edge_data e,int type, directed_weighted_graph g){
 					int src = g.getNode(e.getSrc()).getKey();
 					int dest = g.getNode(e.getDest()).getKey();
@@ -194,6 +228,11 @@ public class Arena {
 					return isOnEdge(p, src, dest, g);
 				}
 
+	/**
+	 * this method change geoLocation (3D) point to 2D point
+	 * @param g game graph
+	 * @return
+	 */
 				private static Range2D GraphRange (directed_weighted_graph g){
 					Iterator<node_data> itr = g.getV().iterator();
 					double x0 = 0, x1 = 0, y0 = 0, y1 = 0;

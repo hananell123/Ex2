@@ -3,17 +3,21 @@ package gameClient;
 import Server.Game_Server_Ex2;
 import api.*;
 import myClasses.DWGraph_Algo;
+import myClasses.DWGraph_DS;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.*;
 import java.util.*;
 import java.util.List;
 
+/**
+ * this is the main class of the game, in this class the game start running and the data updates
+ */
 public class Ex2_Client implements Runnable {
 	private static MyFrame _win;
 	private static Arena _ar;
-	private HashMap<Integer,HashMap<Integer,List<node_data>>>allPath=new HashMap<>();
-	private  HashMap<Integer,HashMap<Integer,Double>>allPathDis=new HashMap<>();
+	private HashMap<Integer,HashMap<Integer,List<node_data>>>allPath=new HashMap<>();// all the shortest pathes in the game
+	private  HashMap<Integer,HashMap<Integer,Double>>allPathDis=new HashMap<>();//
 	private List<CL_Agent>AllAgent=new LinkedList<>();
 	private DWGraph_Algo gg=new DWGraph_Algo();
 	private HashMap<Integer,edge_data>srcList=new HashMap<>();
@@ -21,16 +25,16 @@ public class Ex2_Client implements Runnable {
 	private LinkedList<geo_location>locations=new LinkedList<>();
 	private boolean[]GoingToEat;
 	private int AvrgSpeed=1;
-	private  int dt=140;
+	private static int dt=140;
 	private final double destFromPok=0.30;
 	private GUILogIn myLoginFrame = new GUILogIn();
 	private static String[]enter=new String[2];
 
 
-
-
-
-
+	/**
+	 * start of the game, can take data from the login screen or from the jar
+	 * @param a
+	 */
 	public static void main(String[] a) {
 
             enter=a;
@@ -40,14 +44,18 @@ public class Ex2_Client implements Runnable {
 	}
 
 
-	
+	/**
+	 * this is the method that run the game thread
+	 * using other methods to set the thread sleep time between moves
+	 * and make the agent their next destination node
+	 */
 	@Override
 	public void run() {
 		int scenario_num=-1;
 		int id=-1;
 
 
-
+// log in from the jar(cmd)/ login screen
         if(enter.length>0){
         	scenario_num=Integer.parseInt(enter[1]);
         	id=Integer.parseInt(enter[0]);
@@ -65,25 +73,16 @@ public class Ex2_Client implements Runnable {
 		   game_service game = Game_Server_Ex2.getServer(scenario_num);
 			game.login(id);
 
-
-
-
-
-
-			// game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
-//				int id = 999;
-//				game.login();
-
-
 			try {
 				init(game);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		System.out.println();
 			game.startGame();
 			_win.setTitle("Ex2 - OOP: (NONE trivial Solution) " + game.toString());
 			int ind = 1;
-			dt = 120;
+			//dt = 120;
 			int LastTime = 0;
 
 
@@ -100,23 +99,17 @@ public class Ex2_Client implements Runnable {
 
 
 					if(AvrgSpeed<2){
-						dt=140;
+						dt=145;
 					}
 					else {
 						int ReadyToEat = GoingToEat();
-//						if (ReadyToEat > GoingToEat.length / 2) {
-//							dt = 90;
-//						}
 						if (ReadyToEat > 0) {
-
 							//dt=900;
 							dt = setDt();
 							System.out.println("DT is: "+dt);
-
-
 						}
 						else {
-							dt = 165;
+							dt = 110;
 						}
 					}
 
@@ -135,6 +128,13 @@ public class Ex2_Client implements Runnable {
 
 	}
 
+	/**
+	 * set the next node for all the agent that located on node (not on edge).
+	 * if agent stend on src node of pokemon the method set the next node to be the pokemon dest node
+	 * else its call NextNode method
+	 * @param game
+	 * @param gg
+	 */
 	public void moveAgents(game_service game, directed_weighted_graph gg) {
 
 		int newSpeed=0;
@@ -153,6 +153,7 @@ public class Ex2_Client implements Runnable {
 			int dest;
 			if(agent.get_curr_edge()==null){
 				if(agent.getSrcNode()==srcList.get(agent.getID()).getDest()){
+				//if(agent.getLocation().distance(srcList.ge))
 					GoingToEat[agent.getID()]=false;
 				}
 
@@ -171,20 +172,25 @@ public class Ex2_Client implements Runnable {
 		}
 		AvrgSpeed=newSpeed/_ar._agents.size();
 	}
+
+	/**
+	 * find for each agent the closest free pokemon and set the next node in this path to be 
+	 * the agent next node
+	 * @param g game graph
+	 * @param agent given agent
+	 * @return
+	 */
 	private  int nextNode(directed_weighted_graph g, CL_Agent agent){
 
 
 		double currentDistance=Integer.MAX_VALUE;
 		int dest=-1;
 		for(CL_Pokemon p: _ar.getPokemons()) {
-			if(p.get_edge().getSrc()==2){
 
-			}
 			double TempDistance = this.allPathDis.get(agent.getSrcNode()).get(p.get_edge().getSrc());
 			if (TempDistance < currentDistance && TempDistance != -1) {
 				if (srcList.values().contains(p.get_edge()) && srcList.get(agent.getID()) != p.get_edge()) continue;
-
-
+				
 				currentDistance = TempDistance;
 				if (currentDistance == 0 ) {
 					GoingToEat[agent.getID()]=true;
@@ -196,12 +202,8 @@ public class Ex2_Client implements Runnable {
 				srcListLoc.put(agent.getID(),p.getLocation());
 			}
 		}
-
-
 		int src1=agent.getSrcNode();
 		int dest1=srcList.get(agent.getID()).getSrc();
-
-
 		LinkedList<node_data>answer=(LinkedList)allPath.get(src1).get(dest1);
 		if(answer.size()>2) {
 			LinkedList<node_data> temp = null;
@@ -223,13 +225,18 @@ public class Ex2_Client implements Runnable {
 				}
 			}
 		}
-
-
 		return allPath.get(src1).get(dest1).get(1).getKey();
 	}
 
-
-
+	/**
+	 * this is the inisilaize of the game, take the jason data from the server and create the graph
+	 * update every pokemon his located edge
+	 * set the agents next the pokemon with the high value
+	 * set the data to the Arena vriable
+	 *
+	 * @param game
+	 * @throws IOException
+	 */
 	private void init(game_service game) throws IOException {
 
 		String g = game.getGraph();
@@ -321,7 +328,10 @@ public class Ex2_Client implements Runnable {
 	 */
 
 
-
+	/**
+	 * put in HashMap "allPath" all the pathes in the graph
+	 * @param graphToPath
+	 */
 	public void setAllPath(dw_graph_algorithms graphToPath){
 		for(node_data a:graphToPath.getGraph().getV()){
 			allPath.put(a.getKey(),new HashMap<Integer, List<node_data>>());
@@ -330,6 +340,10 @@ public class Ex2_Client implements Runnable {
 			}
 		}
 	}
+	/**
+	 * put in HashMap "allPath" all the pathes size in the graph
+	 * @param graphToPath
+	 */
 	public void setAllPathDis(dw_graph_algorithms graphToPath){
 		for(node_data a:graphToPath.getGraph().getV()){
 			allPathDis.put(a.getKey(),new HashMap<Integer, Double>());
@@ -338,12 +352,23 @@ public class Ex2_Client implements Runnable {
 			}
 		}
 	}
+
+	/**
+	 *
+	 * @param g
+	 */
 	public void nodeLocation(directed_weighted_graph g){
 		for(node_data n:g.getV()){
 			locations.add(n.getLocation());
 		}
 
 	}
+
+	/**
+	 * find the high value poke in the start of the game
+	 * @param p
+	 * @param arr
+	 */
 	public void HighValuePok(CL_Pokemon p,CL_Pokemon[] arr) {
 		for (int i = 0; i < arr.length; i++) {
 			if (arr[i] == null) {
@@ -363,6 +388,11 @@ public class Ex2_Client implements Runnable {
 
 		}
 	}
+
+	/**
+	 * update if their is agent that on src edge of pokemon
+	 * @return
+	 */
 		public int GoingToEat(){
 		int counter=0;
 			for(int i=0;i<GoingToEat.length;i++){
@@ -372,7 +402,11 @@ public class Ex2_Client implements Runnable {
 
 		}
 
-		public int setDt(){
+	/**
+	 * set the best dt (thread sleep time) by the agents that "going to eat" distance from the pokemon
+	 * @return
+	 */
+	public int setDt(){
 		int answer=dt;
 		double minDt=Integer.MAX_VALUE;
 			for(CL_Agent agent: _ar._agents){
@@ -383,26 +417,27 @@ public class Ex2_Client implements Runnable {
 
 					//double pokDis=srcListLoc.get(agent.getID()).distance(gg.getGraph().getNode(srcList.get(agent.getID()).getSrc()).getLocation());
 					geo_location pokLocation= srcListLoc.get(agent.getID());
-					geo_location srcNodeLocation=gg.getGraph().getNode(srcList.get(agent.getID()).getSrc()).getLocation();
+					//geo_location srcNodeLocation=gg.getGraph().getNode(srcList.get(agent.getID()).getSrc()).getLocation();
+					geo_location srcNodeLocation= agent.getLocation();
+					geo_location destNodeLocation=gg.getGraph().getNode(srcList.get(agent.getID()).getDest()).getLocation();
+
 					double pokDis=pokLocation.distance(srcNodeLocation);
 					int dis= (int) (pokDis/(agent.getSpeed()/(dt/1000)));
+					System.out.println(((dis+1)*(agent.getSpeed()/(dt/1000)))-pokDis);
+					if(agent.getLocation().distance(destNodeLocation)<pokLocation.distance(destNodeLocation)) continue;
+					//if(agent.getLocation().distance(gg.getGraph().getNode(srcList.get(agent.getID()).getDest()).getLocation()))
 
 					if(((dis+1)*(agent.getSpeed()/(dt/1000)))-pokDis>destFromPok) {
-						for (int i = 70 ;i > 30; i--) {
+						for (int i = 80 ;i > 35; i--) {
 							if (pokDis % (agent.getSpeed()/(dt/1000)) < destFromPok || (dis+1)*(agent.getSpeed()/(dt/1000))-pokDis < destFromPok) {
 								if (answer > i) {
 									answer = i;
 									break;
-
 								}
 							}
 						}
 					}
 				}
-
-
-
-
 			}
 			 return answer;
 

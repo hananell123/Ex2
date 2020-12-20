@@ -16,6 +16,7 @@ public class DWGraph_DS implements directed_weighted_graph {
     private HashMap<Integer, node_data> Nodes=new HashMap<Integer,node_data>();
     private HashMap <Integer,HashMap<Integer,Integer>>point_on_me=new HashMap<Integer,HashMap<Integer,Integer>>();
     private HashMap<Integer,edge_data> edges = new  HashMap<Integer,edge_data>();
+    private double allEdgeWeight=0;
     private int mc=0,edge_size=0;
 
     public DWGraph_DS(){
@@ -89,6 +90,8 @@ public class DWGraph_DS implements directed_weighted_graph {
         if(!Nodes.containsKey(src)||!Nodes.containsKey(dest)) return ;
         if(Edges.get(src).containsKey(dest)){//already ni
             if(Edges.get(src).get(dest).getWeight()==w)return;
+           allEdgeWeight-= Edges.get(src).get(dest).getWeight();
+           allEdgeWeight+=w;
             ((edge)(Edges.get(src).get(dest))).setEdge_weight(w);
             mc++;
 
@@ -99,6 +102,7 @@ public class DWGraph_DS implements directed_weighted_graph {
             Edges.get(src).put(dest,temp);
             point_on_me.get(dest).put(src,src);
             edge_size++;
+            allEdgeWeight+=w;
             edges.put(temp.getSrc() , temp);
             mc++;
         }
@@ -213,7 +217,11 @@ public class DWGraph_DS implements directed_weighted_graph {
      */
     public HashMap<Integer,edge_data> getEdges() {
         return edges;
+    }
 
+    public double getWeightAvrg(){
+
+        return allEdgeWeight/edge_size;
     }
 }
 
