@@ -2,7 +2,7 @@ package gameClient;
 
 import Server.Game_Server_Ex2;
 import api.game_service;
-import gameClient.Ex2_Client;
+import gameClient.Ex2;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicOptionPaneUI;
