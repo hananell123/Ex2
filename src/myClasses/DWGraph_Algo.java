@@ -20,7 +20,10 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     directed_weighted_graph gAlgo = new DWGraph_DS();
     HashMap<Integer, Double> distance=new HashMap<>();
 
-
+/**
+ * node vairble is a int and for the shortesr path method we need an double
+ * this class is a inner class that contains NodeData and double varible for path weight
+ */
     private class NodeForPath implements Comparable<NodeForPath> {
         private node_data n;
         private double w;
@@ -45,7 +48,13 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         public node_data getN() {
             return n;
         }
-        @Override
+
+    /**
+     * compere to NodeForPath by their weight
+     * @param o
+     * @return
+     */
+    @Override
         public int compareTo(NodeForPath o) {
             int ans = 0;
             if (this.getW() - o.getW() > 0) ans = 1;
@@ -55,7 +64,10 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         }
     }
 
-
+    /**
+     * initialize the graph to directed weighted graph algo
+     * @param g
+     */
     @Override
     public void init(directed_weighted_graph g) {
         this.gAlgo = g;
@@ -67,12 +79,24 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return gAlgo;
     }
 
+    /**
+     * make a deep copy of the graph (using the copy constructors)
+     * @return
+     */
     @Override
     public directed_weighted_graph copy() {
         directed_weighted_graph copy = new DWGraph_DS((DWGraph_DS) gAlgo);
         return copy;
 
     }
+
+    /**
+     * this function check the connectivity of the graph
+     * using BFS and revers BFS.
+     * firs check from random node the path for all the other nodes and count them return false if one miss
+     * second check that all the nodes have path to the same node in the firs part
+     * @return
+     */
 
     @Override
     public boolean isConnected() {
@@ -99,7 +123,8 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             }
         }
         if (counter != gAlgo.nodeSize()) return false;
-        counter = 1; // everyone tag=1
+        // second part
+        counter = 1;
         fakeQ.addLast(firstKey);
         gAlgo.getNode(firstKey).setTag(0);
         while (!fakeQ.isEmpty()) {
@@ -119,6 +144,15 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return false;
     }
 
+    /**
+     * find the shortest path from src node to dest node and return the distance
+     * this mathod use Dijkstra algorithm using priority queue to minimise steps
+     * every timee the algorithm take the node with the shortest distance from the src node and enter his
+     * neighbers to the queue so when he get to the target node in the first time its guarantee that is the shortest path
+     * @param src - start node
+     * @param dest - end (target) node
+     * @return
+     */
     @Override
     public double shortestPathDist(int src, int dest) {
         if (gAlgo.getNode(src) == null || gAlgo.getNode(dest) == null) return -1;
@@ -159,7 +193,14 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return distance.get(dest);
     }
 
-
+    /**
+     * Do the same as the last algorithm but also keep in HashMap the parent of every node
+     * so when the algorithm finish his run we can extract list of node that show the real path
+     * from src to dest
+     * @param src - start node
+     * @param dest - end (target) node
+     * @return
+     */
     @Override
     public List<node_data> shortestPath(int src, int dest) {
 
@@ -220,7 +261,9 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     @Override
 
-
+    /**
+     * save the graph to the given path, using gson format
+     */
     public boolean save(String file) {
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -239,7 +282,11 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return true;
     }
 
-
+    /**
+     * load graph from the given file path
+     * @param file - file name of JSON file
+     * @return
+     */
     @Override
     public boolean load(String file) {
 
