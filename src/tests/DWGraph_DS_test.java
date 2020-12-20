@@ -7,6 +7,7 @@ import myClasses.NodeData;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DWGraph_DS_test {
 
@@ -43,6 +44,8 @@ public class DWGraph_DS_test {
             assertEquals(12 ,myGraph.edgeSize());
 
 
+
+
         }
 
     @Test
@@ -69,6 +72,33 @@ public class DWGraph_DS_test {
        myGraph.addNode(n);
 
        assertEquals(myGraph.getEdge(m.getKey(),n.getKey()), null);
+
+    }
+
+    @Test
+    void edgesTest(){
+        DWGraph_DS myGraph = new DWGraph_DS();
+        NodeData temp;
+        for (int i = 0; i < 5; i++) {
+            temp = new NodeData();
+            myGraph.addNode(temp);
+        }
+
+        assertTrue(myGraph.getE(0).size() == 0);
+        assertTrue(myGraph.getE(1).size() == 0);
+        assertTrue(myGraph.getE(2).size() == 0);
+
+        myGraph.connect(0, 1, 1);
+        myGraph.connect(1, 2, 2);
+        myGraph.connect(2, 3, 3);
+        myGraph.connect(3, 4, 4);
+        myGraph.connect(4, 2, 5);
+
+        assertTrue(myGraph.getE(0).size() == 1);
+        assertTrue(myGraph.getE(1).size() == 1);
+        assertTrue(myGraph.getE(2).size() == 1);
+
+        assertEquals(myGraph.getEdges().size() , 5);
 
     }
 

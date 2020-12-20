@@ -35,22 +35,13 @@ public class MyFrame extends JFrame{
 	private gameClient.util.Range2Range _w2f;
 	private Image im;
 	private Graphics gr;
-	static int pokIndex = 0;
-	static int AgentIndex = 0;
 
-	//private Image im ;
-	//private Graphics gr;
-	private BufferedImage AgentIm0 = null;
-//	 try {
-//		AgentIm1 = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\agent.png"));
-//	} catch (IOException ex) {
-//		// handle exception...
-//	};
+
 	private BufferedImage AgentIm1 = ImageIO.read(new File("src\\gameClient\\Graphic\\agent.png"));
 	private BufferedImage pokIm1 = ImageIO.read(new File("src\\gameClient\\Graphic\\pok2.png"));
-	private BufferedImage pokIm0  = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\pok1.png"));;
+	private BufferedImage pokIm0  = ImageIO.read(new File("src\\gameClient\\Graphic\\pok1.png"));;
 	private BufferedImage background=null;
-	private BufferedImage NodeIm1 = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\node.png"));
+	private BufferedImage NodeIm1 = ImageIO.read(new File("src\\gameClient\\Graphic\\node.png"));
 	private static int timer;
 	private  int level;
 
@@ -137,11 +128,7 @@ public class MyFrame extends JFrame{
 	}
 	private void drawGraph(Graphics g) throws IOException {
 
-//		try {
-//			background = ImageIO.read(new File("C:\\Users\\hanan\\IdeaProjects\\ex2\\src\\gameClient\\Graphic\\backgroundLogo.png"));
-//		} catch (IOException ex) {
-//			// handle exception...
-//		}
+
 
 		directed_weighted_graph gg = _ar.getGraph();
 		Iterator<node_data> iter = gg.getV().iterator();
@@ -189,7 +176,7 @@ public class MyFrame extends JFrame{
 				}
                 if(f.get_edge()!=null)
 					g.setFont(new Font("TimesRoman", Font.CENTER_BASELINE, 25));
-				g.drawString("distance from src "+f.get_edge().getSrc()+" is "+_ar.getGraph().getNode(f.get_edge().getSrc()).getLocation().distance(f.getLocation()),(int) fp.x() - r - 20, (int) fp.y() - r - 10);
+				//g.drawString("distance from src "+f.get_edge().getSrc()+" is "+_ar.getGraph().getNode(f.get_edge().getSrc()).getLocation().distance(f.getLocation()),(int) fp.x() - r - 20, (int) fp.y() - r - 10);
 
 
 			}
@@ -236,7 +223,7 @@ public class MyFrame extends JFrame{
 						//g.fillOval((int) fp.x() - r, (int) fp.y() - r, 2 * r, 2 * r);
 						//AgentIm = pokImages[0];
 						g.drawImage(AgentIm1,(int) fp.x() - r-20, (int) fp.y() - r-10, 3 * (r+10), 3 * (r+10) , ob );
-						g.drawString(""+(int)Ag.getID(), (int) fp.x() - r, (int) fp.y() - r+2);
+						//g.drawString(""+(int)Ag.getID(), (int) fp.x() - r, (int) fp.y() - r+2);
 
 
 

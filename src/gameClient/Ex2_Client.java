@@ -3,11 +3,8 @@ package gameClient;
 import Server.Game_Server_Ex2;
 import api.*;
 import myClasses.DWGraph_Algo;
-import myClasses.edge;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -16,18 +13,19 @@ public class Ex2_Client implements Runnable {
 	private static MyFrame _win;
 	private static Arena _ar;
 	private HashMap<Integer,HashMap<Integer,List<node_data>>>allPath=new HashMap<>();
-	private HashMap<Integer,HashMap<Integer,Double>>allPathDis=new HashMap<>();
+	private  HashMap<Integer,HashMap<Integer,Double>>allPathDis=new HashMap<>();
 	private List<CL_Agent>AllAgent=new LinkedList<>();
-	DWGraph_Algo gg=new DWGraph_Algo();
-	HashMap<Integer,edge_data>srcList=new HashMap<>();
-	HashMap<Integer,geo_location>srcListLoc=new HashMap<>();
-	LinkedList<geo_location>locations=new LinkedList<>();
+	private DWGraph_Algo gg=new DWGraph_Algo();
+	private HashMap<Integer,edge_data>srcList=new HashMap<>();
+	private HashMap<Integer,geo_location>srcListLoc=new HashMap<>();
+	private LinkedList<geo_location>locations=new LinkedList<>();
 	private boolean[]GoingToEat;
 	private int AvrgSpeed=1;
-	private game_service game=null;
-	private  int dt=110;
-	private final double destFromPok=0.37;
-	private int nexCounter=0;
+	private  int dt=140;
+	private final double destFromPok=0.30;
+	private GUILogIn myLoginFrame = new GUILogIn();
+	private static String[]enter=new String[2];
+
 
 
 
@@ -35,6 +33,7 @@ public class Ex2_Client implements Runnable {
 
 	public static void main(String[] a) {
 
+            enter=a;
 			Thread client = new Thread(new Ex2_Client());
 			client.start();
 
@@ -44,8 +43,34 @@ public class Ex2_Client implements Runnable {
 	
 	@Override
 	public void run() {
-			int scenario_num = 11;
-			 game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
+		int scenario_num=-1;
+		int id=-1;
+
+
+
+        if(enter.length>0){
+        	scenario_num=Integer.parseInt(enter[1]);
+        	id=Integer.parseInt(enter[0]);
+		}
+        else {
+			myLoginFrame.run();
+			 //id = myLoginFrame.getIDText();
+			while (scenario_num == -1) {
+				scenario_num = myLoginFrame.getGameLevel();
+				id = myLoginFrame.getIDText();
+			}
+			myLoginFrame.closeFrame();
+		}
+
+		   game_service game = Game_Server_Ex2.getServer(scenario_num);
+			game.login(id);
+
+
+
+
+
+
+			// game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
 //				int id = 999;
 //				game.login();
 
@@ -55,13 +80,11 @@ public class Ex2_Client implements Runnable {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		System.out.println();
-			game.startGame();// start game!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			game.startGame();
 			_win.setTitle("Ex2 - OOP: (NONE trivial Solution) " + game.toString());
 			int ind = 1;
-			dt = 140;
+			dt = 120;
 			int LastTime = 0;
-			boolean t = false;
 
 
 
@@ -77,7 +100,7 @@ public class Ex2_Client implements Runnable {
 
 
 					if(AvrgSpeed<2){
-						dt=150;
+						dt=140;
 					}
 					else {
 						int ReadyToEat = GoingToEat();
@@ -88,12 +111,12 @@ public class Ex2_Client implements Runnable {
 
 							//dt=900;
 							dt = setDt();
-							System.out.println(dt);
+							System.out.println("DT is: "+dt);
 
 
 						}
 						else {
-							dt = 300;
+							dt = 165;
 						}
 					}
 
@@ -111,27 +134,7 @@ public class Ex2_Client implements Runnable {
 			System.exit(0);
 
 	}
-	//	private static void moveAgants(game_service game, directed_weighted_graph gg) {
-//		String lg = game.move();
-//		List<CL_Agent> log = Arena.getAgents(lg, gg);
-//		_ar.setAgents(log);
-//		//ArrayList<OOP_Point3D> rs = new ArrayList<OOP_Point3D>();
-//		String fs =  game.getPokemons();
-//		List<CL_Pokemon> ffs = Arena.json2Pokemons(fs);
-//		_ar.setPokemons(ffs);
-//		for(int i=0;i<log.size();i++) {
-//			CL_Agent ag = log.get(i);
-//			int id = ag.getID();
-//			int dest = ag.getNextNode();
-//			int src = ag.getSrcNode();
-//			double v = ag.getValue();
-//			if(dest==-1) {
-//				dest = nextNode(gg, src);
-//				game.chooseNextEdge(ag.getID(), dest);
-//				System.out.println("Agent: "+id+", val: "+v+"   turned to node: "+dest);
-//			}
-//		}
-//	}
+
 	public void moveAgents(game_service game, directed_weighted_graph gg) {
 
 		int newSpeed=0;
@@ -161,15 +164,13 @@ public class Ex2_Client implements Runnable {
 				else{
 					dest=nextNode(gg,agent);
 				}
-				System.out.println("my far src is "+srcList.get(agent.getID()).getSrc());
 				game.chooseNextEdge(agent.getID(),dest);
-				//System.out.println("[Agent: "+agent.getID()+",current node:"+agent.getSrcNode()+"]"+"go to edge "+srcList.get(agent.getID()).getSrc()+"----->"+srcList.get(agent.getID()).getDest()+" and the next node is: "+dest);
 
 
 			}
 		}
 		AvrgSpeed=newSpeed/_ar._agents.size();
-	}//check!!!
+	}
 	private  int nextNode(directed_weighted_graph g, CL_Agent agent){
 
 
@@ -177,7 +178,6 @@ public class Ex2_Client implements Runnable {
 		int dest=-1;
 		for(CL_Pokemon p: _ar.getPokemons()) {
 			if(p.get_edge().getSrc()==2){
-				//System.out.println("src is"+p.get_edge().getSrc());
 
 			}
 			double TempDistance = this.allPathDis.get(agent.getSrcNode()).get(p.get_edge().getSrc());
@@ -237,7 +237,6 @@ public class Ex2_Client implements Runnable {
 		setAllPath(gg);
 		setAllPathDis(gg);
 		nodeLocation(gg.getGraph());
-		//String pks = game.getPokemons();
 		String fs = game.getPokemons();
 
 		_ar = new Arena();
@@ -271,18 +270,6 @@ public class Ex2_Client implements Runnable {
 				srcList.put(i,MaxPokValue[i].get_edge());
 				srcListLoc.put(i,MaxPokValue[i].getLocation());
 			}
-
-//				for (CL_Pokemon p : AllPokemones) {//check connectivity!!!!!!!!!!!!!!!!!!!!!!!
-//					if(a<AgentNum) {
-//						game.addAgent(p.get_edge().getSrc());
-//						srcList.put(a,p.get_edge());
-//						//AllAgent.add();
-//
-//						//LinkedList<node_data> l = new LinkedList<node_data>();
-//						//l.add(gg.getGraph().getNode(p.get_edge().getDest()));
-//						a++;
-//					}
-//				}
 				for(node_data n:gg.getGraph().getV()){
 					if(a<AgentNum){
 						CL_Agent cl=new CL_Agent(gg.getGraph(),n.getKey());
@@ -315,7 +302,8 @@ public class Ex2_Client implements Runnable {
 			e.printStackTrace();
 
 		}
-		graph.load("C:\\Users\\hanan\\IdeaProjects\\ex2\\gameGraph.json");
+		graph.load("gameGraph.json");
+
 	}
 	/** 
 	 * Moves each of the agents along the edge,
@@ -331,17 +319,7 @@ public class Ex2_Client implements Runnable {
 	 * @param
 	 * @return
 	 */
-//	private static int nextNode(directed_weighted_graph g, int src) {
-//		int ans = -1;
-//		Collection<edge_data> ee = g.getE(src);
-//		Iterator<edge_data> itr = ee.iterator();
-//		int s = ee.size();
-//		int r = (int)(Math.random()*s);
-//		int i=0;
-//		while(i<r) {itr.next();i++;}
-//		ans = itr.next().getDest();
-//		return ans;
-//	}
+
 
 
 	public void setAllPath(dw_graph_algorithms graphToPath){
@@ -396,42 +374,39 @@ public class Ex2_Client implements Runnable {
 
 		public int setDt(){
 		int answer=dt;
+		double minDt=Integer.MAX_VALUE;
 			for(CL_Agent agent: _ar._agents){
 				if(srcList.get(agent.getID()).getSrc()==1){
 					System.out.println();
 				}
 				if(GoingToEat[agent.getID()]==true){
-					int i = 90;
+
 					//double pokDis=srcListLoc.get(agent.getID()).distance(gg.getGraph().getNode(srcList.get(agent.getID()).getSrc()).getLocation());
 					geo_location pokLocation= srcListLoc.get(agent.getID());
 					geo_location srcNodeLocation=gg.getGraph().getNode(srcList.get(agent.getID()).getSrc()).getLocation();
 					double pokDis=pokLocation.distance(srcNodeLocation);
 					int dis= (int) (pokDis/(agent.getSpeed()/(dt/1000)));
 
-
-//					System.out.println("distance fo pok from src is: "+pokDis);
-//					System.out.println("number of move to the pok: "+dis);
-					System.out.println("distance every move is: "+agent.getSpeed()/(dt/10));
-//					//System.out.println("agent src node to catch = "+srcList.get(agent.getID()).getSrc());
-
-
-					System.out.println("What the fuck "+((agent.getSpeed()/(dt/10))-pokDis));
 					if(((dis+1)*(agent.getSpeed()/(dt/1000)))-pokDis>destFromPok) {
+						for (int i = 70 ;i > 30; i--) {
+							if (pokDis % (agent.getSpeed()/(dt/1000)) < destFromPok || (dis+1)*(agent.getSpeed()/(dt/1000))-pokDis < destFromPok) {
+								if (answer > i) {
+									answer = i;
+									break;
 
-
-					for ( i = 60; i > 0; i--) {
-						if (pokDis % (agent.getSpeed()/(dt/1000)) < destFromPok || (dis+1)*(agent.getSpeed()/(dt/1000))-pokDis < destFromPok) {
-							if (answer > i) {
-								answer = i;
-								break;
-
+								}
 							}
 						}
 					}
 				}
+
+
+
+
 			}
-		}
-         return answer;
+			 return answer;
+
+
 		}
 
 

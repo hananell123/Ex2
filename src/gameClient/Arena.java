@@ -149,15 +149,6 @@ public class Arena {
 
 	public static void updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
 
-//		for(edge_data e:(((DWGraph_DS)(g))).getEdges().values()){
-//			if(isOnEdge(fr.getLocation(), e,fr.getType(),g)){
-//				fr.set_edge(e);
-//				break;
-//			}
-//
-//		}
-
-		//oop_edge_data ans = null;
 		Iterator<node_data> itr = g.getV().iterator();
 		int i = 0;
 		while (itr.hasNext()) {

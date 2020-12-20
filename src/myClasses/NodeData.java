@@ -4,6 +4,9 @@ import api.geo_location;
 import api.node_data;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ *
+ */
 public class NodeData implements node_data,Comparable<node_data>  {
 
     private int key,tag=0;

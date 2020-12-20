@@ -8,6 +8,11 @@ import myClasses.DWGraph_DS;
 import myClasses.NodeData;
 import org.junit.jupiter.api.Test;
 
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+
 public class DWGraph_Algo_test {
 
 
@@ -43,6 +48,41 @@ public class DWGraph_Algo_test {
         return unConnectAlgo;
     }
 
+    DWGraph_Algo build_Connect() {
+        DWGraph_DS myGraph = new DWGraph_DS();
+        NodeData temp;
+        for (int i = 0; i < 5; i++) {
+            temp = new NodeData();
+            myGraph.addNode(temp);
+        }
+
+        myGraph.connect(10, 11, 1);
+        myGraph.connect(11, 12, 2);
+        myGraph.connect(12, 13, 3);
+        myGraph.connect(13, 14, 4);
+        myGraph.connect(14, 10, 5);
+
+//        myGraph.connect(11, 10, 1);
+//        myGraph.connect(12, 11, 2);
+//        myGraph.connect(13, 12, 3);
+//        myGraph.connect(14, 13, 4);
+//        myGraph.connect(10, 14, 5);
+
+        DWGraph_Algo ConnectAlgo=new DWGraph_Algo();
+        ConnectAlgo.init(myGraph);
+
+        return ConnectAlgo;
+    }
+
+    @Test
+    void connectivity() {
+        DWGraph_Algo unConnected = build_unConnect();
+        assertTrue(!unConnected.isConnected());
+
+        DWGraph_Algo Connected = build_Connect();
+        assertTrue(Connected.isConnected());
+
+    }
 
     @Test
     void save_load() {
