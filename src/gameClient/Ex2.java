@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * this is the main class of the game, in this class the game start running and the data updates
  */
-public class Ex2_Client implements Runnable {
+class Ex2_Client implements Runnable {
 	private static MyFrame _win;
 	private static Arena _ar;
 	private HashMap<Integer,HashMap<Integer,List<node_data>>>allPath=new HashMap<>();// all the shortest pathes in the game
@@ -127,6 +127,92 @@ public class Ex2_Client implements Runnable {
 			System.exit(0);
 
 	}
+	/**
+	 * this is the inisilaize of the game, take the jason data from the server and create the graph
+	 * update every pokemon his located edge
+	 * set the agents next the pokemon with the high value
+	 * set the data to the Arena vriable
+	 *
+	 * @param game
+	 * @throws IOException
+	 */
+	private void init(game_service game) throws IOException {
+
+		String g = game.getGraph();
+		loadGraph(g,gg);
+		setAllPath(gg);
+		setAllPathDis(gg);
+		nodeLocation(gg.getGraph());
+		String fs = game.getPokemons();
+
+		_ar = new Arena();
+		_ar.setGraph(gg.getGraph());
+		_ar.setPokemons(Arena.json2Pokemons(fs));
+		_win = new MyFrame("test Ex2");
+		_win.setSize(1000, 700);
+		_win.update(_ar);
+
+		_win.show();
+		String info = game.toString();
+		JSONObject line;
+		try {
+			line = new JSONObject(info);
+			JSONObject GameServerInfo = line.getJSONObject("GameServer");
+			int AgentNum = GameServerInfo.getInt("agents");// number of
+			int gameLevel=GameServerInfo.getInt("game_level");
+			_win.getLevel(gameLevel);
+			GoingToEat=new boolean[AgentNum];
+			int src_node = 0;  // arbitrary node, you should start at one of the pokemon
+			ArrayList<CL_Pokemon> AllPokemones= Arena.json2Pokemons(game.getPokemons());//pokemon list
+			CL_Pokemon []MaxPokValue=new CL_Pokemon[AgentNum];
+			for(int a = 0;a<AllPokemones.size();a++) { // pokemones size-->update edges
+				Arena.updateEdge(AllPokemones.get(a),gg.getGraph());
+				HighValuePok(AllPokemones.get(a),MaxPokValue);
+			}
+			int a=0;
+			// set agent to vertex
+			//check if the graph connected or not if not put agent on random nodes
+			if(gg.isConnected()) {
+				for (int i = 0; i < AgentNum; i++) {
+					game.addAgent(MaxPokValue[i].get_edge().getSrc());
+					srcList.put(i, MaxPokValue[i].get_edge());
+					srcListLoc.put(i, MaxPokValue[i].getLocation());
+				}
+			}
+			else{
+				while(a<AgentNum){
+					int temp= (int) (Math.random()*20);
+					if(gg.getGraph().getNode(temp)!=null){
+						game.addAgent(temp);
+						srcList.put(a,null);
+						srcListLoc.put(a,null);
+						a++;
+					}
+
+				}
+
+			}
+//			for(node_data n:gg.getGraph().getV()){
+//				if(a<AgentNum){
+//					CL_Agent cl=new CL_Agent(gg.getGraph(),n.getKey());
+//					//LinkedList<node_data> l = new LinkedList<node_data>();
+//					//l.add(n);
+//					AllAgent.add(cl);
+//					game.addAgent(n.getKey());
+//					a++;
+//					continue;
+//				}
+//				break;
+//			}
+
+
+		}
+		catch (JSONException e) {e.printStackTrace();}
+		AllAgent=Arena.getAgents(game.getAgents(), (directed_weighted_graph) gg.getGraph());
+		_ar.setAgents(AllAgent);
+
+	}
+
 
 	/**
 	 * set the next node for all the agent that located on node (not on edge).
@@ -228,75 +314,6 @@ public class Ex2_Client implements Runnable {
 		return allPath.get(src1).get(dest1).get(1).getKey();
 	}
 
-	/**
-	 * this is the inisilaize of the game, take the jason data from the server and create the graph
-	 * update every pokemon his located edge
-	 * set the agents next the pokemon with the high value
-	 * set the data to the Arena vriable
-	 *
-	 * @param game
-	 * @throws IOException
-	 */
-	private void init(game_service game) throws IOException {
-
-		String g = game.getGraph();
-		loadGraph(g,gg);
-		setAllPath(gg);
-		setAllPathDis(gg);
-		nodeLocation(gg.getGraph());
-		String fs = game.getPokemons();
-
-		_ar = new Arena();
-		_ar.setGraph(gg.getGraph());
-		_ar.setPokemons(Arena.json2Pokemons(fs));
-		_win = new MyFrame("test Ex2");
-		_win.setSize(1000, 700);
-		_win.update(_ar);
-
-		_win.show();
-		String info = game.toString();
-		JSONObject line;
-		try {
-			line = new JSONObject(info);
-			JSONObject GameServerInfo = line.getJSONObject("GameServer");
-			int AgentNum = GameServerInfo.getInt("agents");// number of
-			int gameLevel=GameServerInfo.getInt("game_level");
-			_win.getLevel(gameLevel);
-			GoingToEat=new boolean[AgentNum];
-			int src_node = 0;  // arbitrary node, you should start at one of the pokemon
-			ArrayList<CL_Pokemon> AllPokemones= Arena.json2Pokemons(game.getPokemons());//pokemon list
-			CL_Pokemon []MaxPokValue=new CL_Pokemon[AgentNum];
-			for(int a = 0;a<AllPokemones.size();a++) { // pokemones size-->update edges
-				Arena.updateEdge(AllPokemones.get(a),gg.getGraph());
-				HighValuePok(AllPokemones.get(a),MaxPokValue);
-			}
-			int a=0;
-			  // set agent to vertex
-			for(int i=0;i<AgentNum;i++){
-				game.addAgent(MaxPokValue[i].get_edge().getSrc());
-				srcList.put(i,MaxPokValue[i].get_edge());
-				srcListLoc.put(i,MaxPokValue[i].getLocation());
-			}
-				for(node_data n:gg.getGraph().getV()){
-					if(a<AgentNum){
-						CL_Agent cl=new CL_Agent(gg.getGraph(),n.getKey());
-						//LinkedList<node_data> l = new LinkedList<node_data>();
-						//l.add(n);
-						AllAgent.add(cl);
-						game.addAgent(n.getKey());
-						a++;
-						continue;
-					}
-					break;
-			}
-
-
-		}
-		catch (JSONException e) {e.printStackTrace();}
-		AllAgent=Arena.getAgents(game.getAgents(), (directed_weighted_graph) gg.getGraph());
-		_ar.setAgents(AllAgent);
-
-	}
 
 	private void loadGraph(String g , DWGraph_Algo graph){
 

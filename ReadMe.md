@@ -29,9 +29,9 @@ In order to allow optimal use of the structure we implemented algorithms that gi
 
 * Shortest path/Shortest path dis - Checks the shortest route between 2 vertices and returns it as a list (Shortest path) or returns only the distance(Shortest path dis)
 
-*Copy - enable to creat a deep copy of the graph if you want to change it with out delet the original graph
+* Copy - enable to creat a deep copy of the graph if you want to change it with out delet the original graph
 
-Save/Load - Allows you to save a given graph or load an old graph (using the Json format).
+* Save/Load - Allows you to save a given graph or load an old graph (using the Json format).
 
 
 ## second part
