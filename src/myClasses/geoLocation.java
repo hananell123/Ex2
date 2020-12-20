@@ -3,11 +3,20 @@ package myClasses;
 
 import api.geo_location;
 
+/**
+ * represent location
+ */
 public class geoLocation implements geo_location {
     double x;
     double y;
     double z;
 
+    /**
+     * constructor of the location
+     * @param x
+     * @param y
+     * @param z
+     */
     public geoLocation(double x, double y, double z){
         this.x=x;
         this.y=y;

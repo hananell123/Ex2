@@ -2,12 +2,20 @@ package myClasses;
 
 import api.edge_data;
 
+/**
+ *
+ */
 public class edge implements edge_data {
     private int src,dest,weight_tag;
     private double w;
     private String edge_info="";
 
-
+    /**
+     * constructor of ddge int the graph
+     * @param src node of the edge
+     * @param dest node
+     * @param edge_weight
+     */
     public edge(int src,int dest,double edge_weight){
         this.src=src;
         this.dest=dest;
@@ -15,15 +23,10 @@ public class edge implements edge_data {
 
     }
 
-
-    /*public edge(edge other){
-        other.weight_tag=this.weight_tag;
-        other.edge_info=this.edge_info;
-        other.edge_weight=this.edge_weight;
-        other.dest=this.dest;
-        other.src=this.src;
-    }*/
-
+    /**
+     * getters and setters
+     * @return
+     */
 
     @Override
     public int getSrc() {

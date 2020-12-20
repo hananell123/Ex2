@@ -5,6 +5,8 @@ import api.node_data;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ *this class represent Graph node
+ * contain constructore, copy constructore getters and setters
  *
  */
 public class NodeData implements node_data,Comparable<node_data>  {
